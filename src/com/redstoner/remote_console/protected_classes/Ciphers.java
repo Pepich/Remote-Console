@@ -22,7 +22,7 @@ import javax.crypto.spec.IvParameterSpec;
 /**
  * This class deals with all encryption related tasks
  * 
- * @author Pepich
+ * @author Pepich1851
  */
 
 class Ciphers
