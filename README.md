@@ -22,7 +22,7 @@ rmc.log.path="latest.log"<br/>
 rmc.noAuth=false<br/>
 \# Enables permission respecting commands. If set to false, users can run anything with elevated permissions. HANDLE WITH CARE!<br/>
 rmc.respectPerms=true<br/>
-\# Will only allow connections from LAN IP ranges (192.168.x.x, 10.x.x.x, 127.0.0.1)
+\# Will only allow connections from LAN IP ranges (192.168.x.x, 10.x.x.x, 127.0.0.1)<br/>
 rmc.LANOnly=false<br/>
 \# Will only allow connections from VM IP ranges (10.x.x.x, 127.0.0.1)<br/>
 rmc.VMOnly=false<br/>
@@ -33,9 +33,9 @@ rmc.noLocal=false<br/>
 \# Will allow localhost connections to authenticate as any user without a password. Meant for debug purposes only. HANDLE WITH CARE!<br/>
 rmc.localnoauth=false<br/>
 \# Will only allow connections from certain IP ranges.<br/>
-\# Exmaples:
-\# [] - IP whitelist disabled. Allow all connections.
-\# If only negative IPs are added or the entire list is prefixed with an !, the whitelist will act as a blacklist, allowing everything except the listed IPs:
+\# Exmaples:<br/>
+\# [] - IP whitelist disabled. Allow all connections.<br/>
+\# If only negative IPs are added or the entire list is prefixed with an !, the whitelist will act as a blacklist, allowing everything except the listed IPs:<br/>
 \# !["127.0.0.1", "192.168.1.\*"] - Acts as blacklist, allows everyone except localhost and 192.168.1.xxx<br/>
 \# ["!127.0.0.1", "!192.168.1.\*"] - Same as above, just more complicated. Useful if you want to combine white and blacklist.<br/>
 \# ["192.168.1.\*"] - Allows connections from all IPs starting with 192.168.1<br/>
