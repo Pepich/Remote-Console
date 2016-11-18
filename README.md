@@ -12,7 +12,7 @@ To use those as launch parameters, add them to your launch script using --\<opti
 LAUNCH PARAMETERS WILL ALWAYS OVERRIDE YOUR CONFIG! If something doesn't work as expected, check if you have put a launch parameter before complaining that an option doesn't work properly.
 
 # DEFAULT CONFIG
-\# Default data folder
+\# Default data folder<br>
 rmc.datafolder="plugins/rmc"
 \# Enable logging
 rmc.log=true
