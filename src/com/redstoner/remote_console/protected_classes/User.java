@@ -139,6 +139,9 @@ public class User extends Thread
 		return saveFile.getAbsolutePath();
 	}
 	
+	/**
+	 * This method will start the user thread in an asynchronous manner to deal with the connection. It will authenticate the user and then process the user inputs.
+	 */
 	@SuppressWarnings("deprecation")
 	@Override
 	public void run()
@@ -350,6 +353,12 @@ public class User extends Thread
 		}
 	}
 	
+	/**
+	 * This method will compute a given input string after the user has been authenticated.
+	 * 
+	 * @param input the user input
+	 * @return the result of the process
+	 */
 	private String compute(String input)
 	{
 		if (input.startsWith("getOnlinePlayers"))
