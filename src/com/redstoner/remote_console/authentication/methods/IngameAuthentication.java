@@ -1,6 +1,7 @@
 package com.redstoner.remote_console.authentication.methods;
 
-import com.redstoner.remote_console.protected_classes.User;
+import java.util.UUID;
+
 import com.redstoner.remote_console.protected_classes.UserManager;
 
 /**
@@ -16,15 +17,14 @@ public class IngameAuthentication extends AuthenticationMethod
 	 */
 	private static final long serialVersionUID = 7482553379914872319L;
 	
-	public IngameAuthentication(User user)
+	private IngameAuthentication(UUID uuid)
 	{
-		super(user);
+		super(uuid);
 	}
 	
 	@Override
 	public boolean authenticate(String[] args)
 	{
-		// TODO Add code to make confirmation request to user
 		return false;
 	}
 	
@@ -40,7 +40,7 @@ public class IngameAuthentication extends AuthenticationMethod
 	
 	public static void register()
 	{
-		UserManager.register("Ingame-Auth", IngameAuthentication.class);
+		UserManager.registerAuthMethod("Ingame-Auth", IngameAuthentication.class);
 	}
 	
 	/**
@@ -49,21 +49,8 @@ public class IngameAuthentication extends AuthenticationMethod
 	 * @return true
 	 */
 	
-	@Override
-	protected boolean load()
+	public static IngameAuthentication load(UUID uuid)
 	{
-		return false;
-	}
-	
-	/**
-	 * This method is empty, as initializing a new empty input based AuthenticationMethod makes no sense.
-	 * 
-	 * @return true
-	 */
-	
-	@Override
-	public boolean init()
-	{
-		return true;
+		return new IngameAuthentication(uuid);
 	}
 }

@@ -7,11 +7,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.UUID;
 
 import org.apache.commons.codec.binary.Base32;
 
 import com.redstoner.remote_console.protected_classes.Main;
-import com.redstoner.remote_console.protected_classes.User;
 import com.redstoner.remote_console.protected_classes.UserManager;
 import com.redstoner.remote_console.utils.TOTP;
 
@@ -25,10 +26,14 @@ public class GoogleAuthentication extends AuthenticationMethod
 {
 	private static final long serialVersionUID = 5531038871418983654L;
 	private String secretKey;
+	private ArrayList<String> restoreKeys;
 	
-	public GoogleAuthentication(User user)
+	private GoogleAuthentication(UUID uuid)
 	{
-		super(user);
+		super(uuid);
+		secretKey = getRandomSecretKey();
+		for (int i = 0; i < 8; i++)
+			restoreKeys.add(getRandomSecretKey());
 	}
 	
 	@Override
@@ -38,6 +43,8 @@ public class GoogleAuthentication extends AuthenticationMethod
 			return false;
 		else if (args[0].equals(TOTP.getTOTPCode(secretKey)))
 			return true;
+		else if (restoreKeys.remove(args[0]))
+			return true;
 		else
 			return false;
 	}
@@ -45,8 +52,7 @@ public class GoogleAuthentication extends AuthenticationMethod
 	@Override
 	public void save()
 	{
-		File saveFile = new File(owner.getSaveLocation() + "g-auth.sav");
-		if (Main.testMode()) saveFile.deleteOnExit();
+		File saveFile = new File(Main.getDataLocation().getAbsolutePath() + uuid.toString() + "/google-auth.auth");
 		try
 		{
 			saveFile.createNewFile();
@@ -63,41 +69,27 @@ public class GoogleAuthentication extends AuthenticationMethod
 	
 	public static void register()
 	{
-		UserManager.register("Google-Auth", GoogleAuthentication.class);
+		UserManager.registerAuthMethod("Google-Auth", GoogleAuthentication.class);
 	}
 	
-	@Override
-	public boolean init()
+	public static GoogleAuthentication load(UUID uuid)
 	{
-		secretKey = getRandomSecretKey();
-		setEnabled(true);
-		return true;
-	}
-	
-	@Override
-	protected boolean load()
-	{
-		File saveFile = new File(owner.getSaveLocation() + "token.sav");
+		File saveFile = new File(Main.getDataLocation().getAbsolutePath() + uuid.toString() + "/google-auth.auth");
 		if (!saveFile.exists())
-			return false;
+			return null;
 		else
 		{
 			try
 			{
 				ObjectInputStream saveStream = new ObjectInputStream(new FileInputStream(saveFile));
-				GoogleAuthentication temp = (GoogleAuthentication) saveStream.readObject();
-				if (temp != null)
-				{
-					this.secretKey = temp.secretKey;
-					this.setEnabled(temp.isEnabled());
-				}
+				GoogleAuthentication returnAuth = (GoogleAuthentication) saveStream.readObject();
 				saveStream.close();
-				return true;
+				return returnAuth;
 			}
 			catch (IOException | ClassNotFoundException e)
 			{
 				e.printStackTrace();
-				return false;
+				return null;
 			}
 		}
 	}

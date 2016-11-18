@@ -9,12 +9,12 @@ import java.io.ObjectOutputStream;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
+import java.util.UUID;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
 import com.redstoner.remote_console.protected_classes.Main;
-import com.redstoner.remote_console.protected_classes.User;
 import com.redstoner.remote_console.protected_classes.UserManager;
 
 /**
@@ -30,10 +30,10 @@ public class PasswordAuthentication extends AuthenticationMethod
 	private byte[] hashedPassword;
 	private transient byte[] salt;
 	
-	public PasswordAuthentication(User user)
+	public PasswordAuthentication(UUID uuid)
 	{
-		super(user);
-		this.salt = user.getUUID().toString().getBytes();
+		super(uuid);
+		this.salt = uuid.toString().getBytes();
 	}
 	
 	protected int setPassword(String oldPassword, String newPassword, String newPasswordConfirmed)
@@ -84,8 +84,7 @@ public class PasswordAuthentication extends AuthenticationMethod
 	@Override
 	public void save()
 	{
-		File saveFile = new File(owner.getSaveLocation() + "password.sav");
-		if (Main.testMode()) saveFile.deleteOnExit();
+		File saveFile = new File(Main.getDataLocation().getAbsolutePath() + uuid.toString() + "/password-auth.auth");
 		try
 		{
 			saveFile.createNewFile();
@@ -102,50 +101,36 @@ public class PasswordAuthentication extends AuthenticationMethod
 	
 	public static void register()
 	{
-		UserManager.register("Password-Auth", PasswordAuthentication.class);
+		UserManager.registerAuthMethod("Password-Auth", PasswordAuthentication.class);
 	}
 	
-	@Override
-	protected boolean load()
+	public static PasswordAuthentication load(UUID uuid)
 	{
-		File saveFile = new File(owner.getSaveLocation() + "token.sav");
+		File saveFile = new File(Main.getDataLocation().getAbsolutePath() + uuid.toString() + "/password-auth.auth");
 		if (!saveFile.exists())
-			return false;
+			return new PasswordAuthentication(uuid);
 		else
 		{
 			try
 			{
 				ObjectInputStream saveStream = new ObjectInputStream(new FileInputStream(saveFile));
-				PasswordAuthentication temp = (PasswordAuthentication) saveStream.readObject();
-				if (temp != null)
-				{
-					this.hashedPassword = temp.hashedPassword;
-					this.setEnabled(temp.isEnabled());
-				}
+				PasswordAuthentication returnAuth = (PasswordAuthentication) saveStream.readObject();
 				saveStream.close();
-				return true;
+				return returnAuth;
 			}
 			catch (IOException | ClassNotFoundException e)
 			{
 				e.printStackTrace();
-				return false;
+				return null;
 			}
 		}
-	}
-	
-	@Override
-	public boolean init()
-	{
-		hashedPassword = null;
-		setEnabled(false);
-		return true;
 	}
 	
 	public static byte[] hash(String password, byte[] salt) throws NoSuchAlgorithmException, InvalidKeySpecException
 	{
 		String algorithm = "PBKDF2WithHmacSHA512";
 		int derivedKeyLength = 512;
-		int iterations = 10000;
+		int iterations = 50000;
 		
 		KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, iterations, derivedKeyLength);
 		SecretKeyFactory f = SecretKeyFactory.getInstance(algorithm);

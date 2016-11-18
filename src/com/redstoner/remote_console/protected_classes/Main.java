@@ -1,15 +1,22 @@
 package com.redstoner.remote_console.protected_classes;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.UUID;
 import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.redstoner.remote_console.authentication.methods.GoogleAuthentication;
 import com.redstoner.remote_console.authentication.methods.IngameAuthentication;
 import com.redstoner.remote_console.authentication.methods.PasswordAuthentication;
 import com.redstoner.remote_console.authentication.methods.TokenAuthentication;
+import com.redstoner.remote_console.utils.ConsoleReader;
 
 /**
  * This class contains the test-mode entry point as well as the javaPlugin onEnable/onDisable methods
@@ -17,55 +24,27 @@ import com.redstoner.remote_console.authentication.methods.TokenAuthentication;
  * @author Pepich
  */
 
-public class Main extends JavaPlugin
+public class Main extends JavaPlugin implements Listener
 {
-	private static UserManager userManager;
 	
-	private static boolean testMode = false;
-	public static UUID testUUID = UUID.fromString("52e0a62c-799a-45f7-ae59-02ac206e8ae6");
+	private static UserManager userManager;
 	
 	public static Logger logger = null;
 	
-	/**
-	 * This method is used for automated functionality tests, it should do something when you just run it :P
-	 * If it errors out then some code went bad ;)
-	 * 
-	 * @param args currently getting ignored
-	 */
-	
-	public static void main(String[] args)
-	{
-		// Enabling test-mode
-		testMode = true;
-		// Register the AuthenticationMethods
-		registerClasses();
-		
-		// Set up an empty, test UserManager
-		try
-		{
-			userManager = UserManager.getInstance(9000);
-			userManager.start();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-			System.exit(20);
-		}
-	}
+	private static Plugin plugin;
 	
 	/**
 	 * This method will be called on plugin enable and will set up the required environment
 	 */
-	
 	@Override
 	public void onEnable()
 	{
-		// Grab and store logger for ease of use
+		plugin = this;
 		logger = this.getLogger();
-		// Register the AuthenticationMethods
 		registerClasses();
 		
-		// Set up the UserManager
+		ConsoleReader.init();
+		
 		try
 		{
 			userManager = UserManager.getInstance(9000);
@@ -74,28 +53,44 @@ public class Main extends JavaPlugin
 		catch (IOException e)
 		{
 			e.printStackTrace();
-			// If binding to the port doesn't work, disable the plugin
 			// TODO: Add error message
 			getPluginLoader().disablePlugin(this);
 			return;
 		}
+		
+		Bukkit.getPluginManager().registerEvents(this, this);
+	}
+	
+	@SuppressWarnings("deprecation")
+	@Override
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
+	{
+		if (cmd.getName().equalsIgnoreCase("test"))
+		{
+			Player player = UserManager.getPlayer(Bukkit.getOfflinePlayer(args[0]).getUniqueId());
+			StringBuilder st = new StringBuilder();
+			for (int i = 1; i < args.length; i++)
+				st.append(args[i] + " ");
+			if (st.toString().startsWith("/"))
+				player.performCommand(st.toString().replaceFirst("/", ""));
+			else
+				player.chat(st.toString());
+		}
+		return true;
 	}
 	
 	/**
 	 * This method will be called on plugin disable and will perform saving and cleaning up
 	 */
-	
 	@Override
 	public void onDisable()
 	{
-		// Properly exist the UserManager
 		userManager.quit();
 	}
 	
 	/**
 	 * This method will register all necessary classes that are getting loaded on runtime
 	 */
-	
 	public static void registerClasses()
 	{
 		GoogleAuthentication.register();
@@ -104,8 +99,19 @@ public class Main extends JavaPlugin
 		TokenAuthentication.register();
 	}
 	
-	public static boolean testMode()
+	/**
+	 * @return the plugin instance
+	 */
+	public static Plugin getPlugin()
 	{
-		return testMode;
+		return plugin;
+	}
+	
+	/**
+	 * @return the default save folder for the plugin
+	 */
+	public static File getDataLocation()
+	{
+		return new File("plugins/remoteconsole/");
 	}
 }

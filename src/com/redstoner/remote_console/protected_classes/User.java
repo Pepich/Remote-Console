@@ -32,9 +32,10 @@ import com.redstoner.remote_console.authentication.methods.TokenAuthentication;
 
 public class User extends Thread
 {
+	private boolean isRunning = false;
+	
 	private int status = 0;
 	
-	// Authentication Methods
 	private TokenAuthentication tokenAuth;
 	private GoogleAuthentication googleAuth;
 	private IngameAuthentication ingameAuth;
@@ -42,17 +43,16 @@ public class User extends Thread
 	
 	private boolean isAuthenticated = false;
 	
-	// User properties
 	private UUID uuid;
 	private File saveFile;
 	
-	// Connection and data streams
 	private final Socket connection;
 	private final ObjectInputStream objectIn;
 	private final ObjectOutputStream objectOut;
 	
-	// Ciphers object for encrypted communication
 	private Ciphers ciphers;
+	
+	private FakePlayer player;
 	
 	/**
 	 * This constructor will create a new blank user that will load the user-data as soon as a username was provided.
@@ -60,10 +60,8 @@ public class User extends Thread
 	 * @param connection the connection of the user with the server
 	 * @throws IOException if something went wrong with the connection
 	 */
-	
 	public User(Socket connection) throws IOException
 	{
-		// Set up the connection and data streams
 		this.connection = connection;
 		this.objectIn = new ObjectInputStream(connection.getInputStream());
 		this.objectOut = new ObjectOutputStream(connection.getOutputStream());
@@ -72,7 +70,6 @@ public class User extends Thread
 	/**
 	 * This method will save the user data to the file system
 	 */
-	
 	public void save()
 	{
 		tokenAuth.save();
@@ -84,63 +81,25 @@ public class User extends Thread
 	/**
 	 * This method will load the user data from the file system
 	 */
-	
 	public void load()
 	{
-		this.tokenAuth = new TokenAuthentication(this);
-		this.googleAuth = new GoogleAuthentication(this);
-		this.ingameAuth = new IngameAuthentication(this);
-		this.passwordAuth = new PasswordAuthentication(this);
+		this.tokenAuth = TokenAuthentication.load(uuid);
+		this.googleAuth = GoogleAuthentication.load(uuid);
+		this.ingameAuth = IngameAuthentication.load(uuid);
+		this.passwordAuth = PasswordAuthentication.load(uuid);
 	}
 	
 	/**
 	 * This method returns the current authentication status of the user
 	 */
-	
 	public boolean isAuthenticated()
 	{
 		return isAuthenticated;
 	}
 	
 	/**
-	 * This methods tries to authenticate a user with the given parameters
-	 * 
-	 * @param args the parameters to authenticate the user with
-	 * @return if the authentication was successful
-	 */
-	
-	public boolean authenticate(String[] args)
-	{
-		return isAuthenticated;
-	}
-	
-	/**
-	 * DEBUG ONLY! This method will force-authenticate a user. Only available in test-mode.
-	 * 
-	 * @return if the operation was successfull
-	 * @throws UnsupportedOperationException when trying to force-authenticate a user with disabled test-mode
-	 */
-	
-	protected boolean forceAuthenticate() throws UnsupportedOperationException
-	{
-		// Check if force-authentication is allowed
-		if (Main.testMode())
-			isAuthenticated = true;
-		else
-		{
-			// Print warning message
-			Main.logger
-					.warning("Tried to force-authenticate a user when testmode was disabled. Disconnecting user now!");
-			disconnect();
-			throw new UnsupportedOperationException("Can not force-authenticate a user when not in test-mode.");
-		}
-		return true;
-	}
-	
-	/**
 	 * This method properly exits the connection of the user.
 	 */
-	
 	protected void disconnect()
 	{
 		// Tell the main-loop to stop
@@ -164,7 +123,6 @@ public class User extends Thread
 	 * 
 	 * @param message the message to send
 	 */
-	
 	protected void disconnect(String message)
 	{
 		sendMessage(message);
@@ -176,18 +134,15 @@ public class User extends Thread
 	 * 
 	 * @return the save-folders location
 	 */
-	
 	public String getSaveLocation()
 	{
 		return saveFile.getAbsolutePath();
 	}
 	
-	public boolean isRunning = false;
-	
+	@SuppressWarnings("deprecation")
 	@Override
 	public void run()
 	{
-		// Set self to running mode
 		isRunning = true;
 		
 		/*
@@ -292,18 +247,26 @@ public class User extends Thread
 					String input = ((String) ((SealedObject) objectIn.readObject())
 							.getObject(ciphers.getNextAESDecode()));
 					input = input.substring(5, input.length() - 5);
-					uuid = getUUID(input);
+					uuid = Bukkit.getOfflinePlayer(input).getUniqueId();
 					
 					// Check if the user is authorized to view console
-					if (UserManager.uuidExists(uuid))
+					if (UserManager.uuidAuthorized(uuid))
 					{
 						Player p = Bukkit.getPlayer(uuid);
-						if (p == null) status++;
+						if (p == null)
+						{
+							status++;
+							break;
+						}
 						if (p.getAddress().getHostString().toString().equals(connection.getInetAddress().toString()))
 							status = 14;
 						else
 							status++;
 						load();
+					}
+					else
+					{
+						disconnect("No authorized user with the given username could be found!");
 					}
 				}
 				catch (InvalidKeyException | ClassNotFoundException | IllegalBlockSizeException | BadPaddingException
@@ -319,19 +282,36 @@ public class User extends Thread
 				
 				try
 				{
-					objectOut.writeObject(new SealedObject("SRV-REQ-AUT", ciphers.getNextAESEncode()));
+					String type = tokenAuth == null ? "PWD" : "TKN";
+					objectOut.writeObject(new SealedObject("SRV-REQ-" + type, ciphers.getNextAESEncode()));
 					objectOut.flush();
 					
-					String input = (String) ((SealedObject) objectIn.readObject())
+					String[] input = (String[]) ((SealedObject) objectIn.readObject())
 							.getObject(ciphers.getNextAESDecode());
-					if (authenticate(new String[] { input }))
-						if (googleAuth.isEnabled())
+							
+					boolean auth = false;
+					
+					if (tokenAuth != null)
+						auth = tokenAuth.authenticate(input);
+					else
+						auth = passwordAuth.authenticate(input);
+						
+					if (auth)
+					{
+						if (googleAuth != null)
 							status = 5;
 						else
 							status = 6;
+					}
 					else
+					{
 						authAttempts++;
-					if (authAttempts == 3) disconnect("Too many wrong authentication attempts.");
+					}
+					
+					if (authAttempts == 3)
+					{
+						disconnect("Too many invalid authentication attempts!");
+					}
 				}
 				catch (InvalidKeyException | ClassNotFoundException | IllegalBlockSizeException | BadPaddingException
 						| InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchPaddingException
@@ -350,17 +330,63 @@ public class User extends Thread
 			}
 		}
 		
+		player = new FakePlayer(Bukkit.getOfflinePlayer(uuid), UserManager.getLastDisplayName(uuid), this);
+		
 		while (isRunning)
 		{
-			// TODO: Add command handling
 			try
 			{
-				Thread.sleep(1);
+				String input = (String) ((SealedObject) objectIn.readObject()).getObject(ciphers.getNextAESDecode());
+				if (input.startsWith("USR:"))
+					player.compute(input.replaceFirst("USR:", "").replaceAll("  ", "").trim());
+				if (input.startsWith("CMD:")) sendCmdResult(compute(input.replaceFirst("CMD:", "").trim()));
+				
 			}
-			catch (InterruptedException e)
+			catch (InvalidKeyException | IllegalBlockSizeException | NoSuchAlgorithmException | NoSuchPaddingException
+					| InvalidAlgorithmParameterException | IOException | ClassNotFoundException | BadPaddingException e)
 			{
 				e.printStackTrace();
 			}
+		}
+	}
+	
+	private String compute(String input)
+	{
+		if (input.startsWith("getOnlinePlayers"))
+		{
+			boolean displayName = input.contains("-d");
+			StringBuilder sb = new StringBuilder();
+			for (Player p : Bukkit.getOnlinePlayers())
+			{
+				sb.append((displayName ? p.getDisplayName() : p.getName()) + ", ");
+			}
+			
+			for (User u : UserManager.getConnectedUsers())
+			{
+				sb.append((displayName ? u.player.getDisplayName() : (u.player.getName() + "[§7C]")) + ", ");
+			}
+			return sb.toString();
+		}
+		return null;
+	}
+	
+	/**
+	 * This method will send a command result to the client.
+	 * 
+	 * @param message the message to be sent
+	 */
+	private void sendCmdResult(String message)
+	{
+		try
+		{
+			objectOut.writeObject(new SealedObject("CMD: " + message, ciphers.getNextAESEncode()));
+			objectOut.flush();
+		}
+		catch (InvalidKeyException | IllegalBlockSizeException | NoSuchAlgorithmException | NoSuchPaddingException
+				| InvalidAlgorithmParameterException | IOException e)
+		{
+			e.printStackTrace();
+			disconnect("An unexpected exception occured, closing connection.");
 		}
 	}
 	
@@ -369,10 +395,9 @@ public class User extends Thread
 	 * 
 	 * @param message the message to be sent
 	 */
-	
 	protected void sendMessage(String message)
 	{
-		// if status < 3 then there was no encrypted connection established yet -> send in plaintext. Else, send encrypted.
+		// If status < 3 then there was no encrypted connection established yet -> send in plain text. Else, send encrypted.
 		if (status < 3)
 		{
 			try
@@ -403,18 +428,8 @@ public class User extends Thread
 	}
 	
 	/**
-	 * This method will look up the UUID of any given username.
-	 * 
-	 * @param username the username to look up the UUID of
-	 * @return null if the user does not exist, the UUID if it does
+	 * @return the uuid of the user
 	 */
-	
-	@Deprecated
-	public static UUID getUUID(String username)
-	{
-		return Bukkit.getOfflinePlayer(username).getUniqueId();
-	}
-	
 	public UUID getUUID()
 	{
 		return uuid;

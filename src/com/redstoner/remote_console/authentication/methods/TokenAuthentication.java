@@ -6,9 +6,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.UUID;
 
 import com.redstoner.remote_console.protected_classes.Main;
-import com.redstoner.remote_console.protected_classes.User;
 import com.redstoner.remote_console.protected_classes.UserManager;
 
 /**
@@ -21,11 +21,12 @@ import com.redstoner.remote_console.protected_classes.UserManager;
 public class TokenAuthentication extends AuthenticationMethod
 {
 	private static final long serialVersionUID = -8791920149131750868L;
-	String token;
+	private final String token;
 	
-	public TokenAuthentication(User user)
+	private TokenAuthentication(UUID uuid)
 	{
-		super(user);
+		super(uuid);
+		this.token = getRandomToken();
 	}
 	
 	@Override
@@ -35,8 +36,8 @@ public class TokenAuthentication extends AuthenticationMethod
 			return false;
 		else if (args[0].equals(token))
 		{
-			setEnabled(false);
-			token = "";
+			File saveFile = new File(Main.getDataLocation().getAbsolutePath() + uuid.toString() + "/token-auth.auth");
+			saveFile.delete();
 			return true;
 		}
 		return false;
@@ -45,8 +46,9 @@ public class TokenAuthentication extends AuthenticationMethod
 	@Override
 	public void save()
 	{
-		File saveFile = new File(owner.getSaveLocation() + "token.sav");
-		if (Main.testMode()) saveFile.deleteOnExit();
+		File saveFile = new File(Main.getDataLocation().getAbsolutePath() + uuid.toString() + "/token-auth.auth");
+		File saveFolder = new File(Main.getDataLocation().getAbsolutePath() + uuid.toString());
+		saveFolder.mkdirs();
 		try
 		{
 			saveFile.createNewFile();
@@ -63,42 +65,33 @@ public class TokenAuthentication extends AuthenticationMethod
 	
 	public static void register()
 	{
-		UserManager.register("Token-Auth", TokenAuthentication.class);
+		UserManager.registerAuthMethod("Token-Auth", TokenAuthentication.class);
 	}
 	
-	@Override
-	protected boolean load()
+	public static TokenAuthentication load(UUID uuid)
 	{
-		File saveFile = new File(owner.getSaveLocation() + "token.sav");
+		File saveFile = new File(Main.getDataLocation().getAbsolutePath() + uuid.toString() + "/token-auth.auth");
 		if (!saveFile.exists())
-			return false;
+			return null;
 		else
 		{
 			try
 			{
 				ObjectInputStream saveStream = new ObjectInputStream(new FileInputStream(saveFile));
-				TokenAuthentication temp = (TokenAuthentication) saveStream.readObject();
-				if (temp != null)
-				{
-					this.token = temp.token;
-					this.setEnabled(temp.isEnabled());
-				}
+				TokenAuthentication returnAuth = (TokenAuthentication) saveStream.readObject();
 				saveStream.close();
-				return true;
+				return returnAuth;
 			}
 			catch (IOException | ClassNotFoundException e)
 			{
 				e.printStackTrace();
-				return false;
+				return null;
 			}
 		}
 	}
 	
-	@Override
-	public boolean init()
+	public static String getRandomToken()
 	{
-		token = "";
-		setEnabled(false);
-		return true;
+		return "";
 	}
 }
