@@ -61,8 +61,11 @@ public class Main extends JavaPlugin implements Listener
 		Bukkit.getPluginManager().registerEvents(this, this);
 	}
 	
-	@SuppressWarnings("deprecation")
+	/**
+	 * Temporary method
+	 */
 	@Override
+	@Deprecated
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
 	{
 		if (cmd.getName().equalsIgnoreCase("test"))
