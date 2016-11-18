@@ -11,9 +11,9 @@ Configuration is possible through the file plugins/remoteconsole/remoteconsole.p
 To use those as launch parameters, add them to your launch script using --\<option\>.
 LAUNCH PARAMETERS WILL ALWAYS OVERRIDE YOUR CONFIG! If something doesn't work as expected, check if you have put a launch parameter before complaining that an option doesn't work properly.
 
-# DEFAULT CONFIG
+# DEFAULT CONFIG - The config will be located at plugins/rmc-config.properties
 \# Default data folder<br/>
-rmc.datafolder="plugins/remoteconsole"<br/>
+rmc.datafolder="plugins/remoteconsole/"<br/>
 \# Enable logging<br/>
 rmc.log=true<br/>
 \# Path to the logfile. Path to the datafolder will be put in front<br/>
