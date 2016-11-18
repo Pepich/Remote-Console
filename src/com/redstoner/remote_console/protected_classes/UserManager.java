@@ -38,7 +38,6 @@ public class UserManager extends Thread implements Listener
 	
 	private static ArrayList<User> connectedUsers = new ArrayList<User>();
 	
-	//	private static HashMap<String, Class<? extends AuthenticationMethod>> authMethods = new HashMap<String, Class<? extends AuthenticationMethod>>();
 	private static HashMap<UUID, String> displayNames;
 	
 	/**
@@ -49,8 +48,8 @@ public class UserManager extends Thread implements Listener
 	 */
 	private UserManager(int port) throws IOException
 	{
+		Main.logger.info("Trying to bind to port " + port);
 		serverSocket = new ServerSocket(port);
-		
 		try
 		{
 			loadDisplayNames();
@@ -74,7 +73,7 @@ public class UserManager extends Thread implements Listener
 	private static void loadDisplayNames() throws FileNotFoundException, IOException, ClassNotFoundException
 	{
 		if (displayNames != null) return;
-		File displayNameFile = new File("plugins/RemoteConsole/displayNames.hmap");
+		File displayNameFile = new File(Main.getDataLocation(), "displayNames.hmap");
 		if (!displayNameFile.exists())
 		{
 			displayNames = new HashMap<UUID, String>();
