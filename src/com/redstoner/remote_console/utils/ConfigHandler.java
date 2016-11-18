@@ -201,7 +201,7 @@ public class ConfigHandler
 	{
 		String raw = properties.getProperty(path);
 		if (raw == null) throw new NoSuchElementException("Could not find object at " + path);
-		if (startingChar != 0)
+		if (startingChar != (char) 0)
 		{
 			if (raw.startsWith("" + startingChar))
 				raw = raw.substring(1);
@@ -216,10 +216,12 @@ public class ConfigHandler
 			CharSequence[] expected = null;
 			ArrayList<String> strings = new ArrayList<String>();
 			StringBuilder sb = new StringBuilder();
-			boolean inString = false, escaped = false;
+			boolean inString = true, escaped = false;
 			int i = 1;
+			while (raw.charAt(i) == ' ')
+				i++;
 			char c = 0;
-			for (i = 1; i < raw.length(); i++)
+			for (i = 2; i < raw.length(); i++)
 			{
 				c = raw.charAt(i);
 				if (inString)
@@ -234,7 +236,7 @@ public class ConfigHandler
 						else
 						{
 							error = true;
-							expected = new CharSequence[] { "\"", "\\" };
+							expected = new CharSequence[] { "'\"'", "'\\'" };
 							break;
 						}
 					}
@@ -249,10 +251,15 @@ public class ConfigHandler
 					else
 						sb.append(c);
 				}
-				else if (c == ',')
+				else
+					while (raw.charAt(i) == ' ')
+						i++;
+				if (c == ',')
 				{
 					strings.add(sb.toString());
 					i++;
+					while (raw.charAt(i) == ' ')
+						i++;
 					if (raw.charAt(i) == '"')
 					{
 						sb = new StringBuilder();
@@ -261,7 +268,7 @@ public class ConfigHandler
 					else
 					{
 						error = true;
-						expected = new CharSequence[] { "\"" };
+						expected = new CharSequence[] { "'\"'" };
 						break;
 					}
 				}
@@ -272,7 +279,7 @@ public class ConfigHandler
 				else
 				{
 					error = true;
-					expected = new CharSequence[] { "," };
+					expected = new CharSequence[] { "','" };
 					break;
 				}
 			}
@@ -285,7 +292,6 @@ public class ConfigHandler
 		else
 			throw new InvalidObjectException(
 					"The value found at " + path + " could not be deserialized into an Array of String.");
-					
 	}
 	
 	/**
