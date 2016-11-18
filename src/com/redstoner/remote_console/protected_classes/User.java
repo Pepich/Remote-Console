@@ -298,6 +298,8 @@ public class User extends Thread
 				// Expecting AES ENCRYPTED <authentication>
 				try
 				{
+					objectOut.writeObject(new SealedObject("SRV-REQ-AUT", ciphers.getNextAESEncode()));
+					objectOut.flush();
 					String type = tokenAuth == null ? "PWD" : "TKN";
 					objectOut.writeObject(new SealedObject("SRV-REQ-" + type, ciphers.getNextAESEncode()));
 					objectOut.flush();
