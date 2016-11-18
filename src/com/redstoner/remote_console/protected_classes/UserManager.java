@@ -305,6 +305,11 @@ public class UserManager extends Thread implements Listener
 			if (!authOnly || user.isAuthenticated()) user.sendMessage(message);
 	}
 	
+	/**
+	 * Returns the list of all connected users. They are not necessarily authenticated.
+	 * 
+	 * @return the list of connected users
+	 */
 	protected static ArrayList<User> getConnectedUsers()
 	{
 		return connectedUsers;
