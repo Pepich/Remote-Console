@@ -131,7 +131,7 @@ public class User extends Thread
 	 */
 	protected void disconnect(String message)
 	{
-		sendMessage("MSG: " + message);
+		sendMessage(message);
 		disconnect();
 	}
 	
