@@ -317,9 +317,15 @@ public class User extends Thread
 								
 								result = passwordAuth.overridePassword(input[0], input[1]);
 								if (result == -2)
+								{
 									sendCmdResult("An unexpected error has occured. Please try again later.");
+									continue;
+								}
 								if (result == 0)
+								{
 									sendCmdResult("The passwords you entered do not match. Please try again.");
+									continue;
+								}
 							}
 							
 							status = 6;
