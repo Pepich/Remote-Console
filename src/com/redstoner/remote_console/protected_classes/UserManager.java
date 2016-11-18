@@ -92,8 +92,8 @@ public class UserManager extends Thread implements Listener
 	protected static void saveDisplayNames() throws IOException
 	{
 		if (displayNames == null) return;
-		File displayNameDir = new File("plugins/RemoteConsole/");
-		File displayNameFile = new File("plugins/RemoteConsole/displayNames.hmap");
+		File displayNameDir = Main.getDataLocation();
+		File displayNameFile = new File(Main.getDataLocation(), "displayNames.hmap");
 		if (displayNameFile.exists()) displayNameFile.delete();
 		if (!displayNameDir.mkdirs()) return;
 		if (!displayNameFile.createNewFile()) return;
