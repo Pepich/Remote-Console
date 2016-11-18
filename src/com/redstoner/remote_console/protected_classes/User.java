@@ -304,26 +304,26 @@ public class User extends Thread
 					objectOut.writeObject(new SealedObject("SRV-REQ-" + type, ciphers.getNextAESEncode()));
 					objectOut.flush();
 					
-					String[] input = (String[]) ((SealedObject) objectIn.readObject())
+					String input = (String) ((SealedObject) objectIn.readObject())
 							.getObject(ciphers.getNextAESDecode());
 							
 					boolean auth = false;
 					
 					if (tokenAuth != null)
 					{
-						if (tokenAuth.authenticate(input))
+						if (tokenAuth.authenticate(new String[] { input }))
 						{
 							for (int result = 0; result != 1;)
 							{
 								objectOut.writeObject(new SealedObject("SRV-REQ-PWO", ciphers.getNextAESEncode()));
 								objectOut.flush();
 								
-								input = (String[]) ((SealedObject) objectIn.readObject())
+								String[] input2 = (String[]) ((SealedObject) objectIn.readObject())
 										.getObject(ciphers.getNextAESDecode());
 										
-								if (input.length != 2) continue;
+								if (input2.length != 2) continue;
 								
-								result = passwordAuth.overridePassword(input[0], input[1]);
+								result = passwordAuth.overridePassword(input2[0], input2[1]);
 								if (result == -2)
 								{
 									sendCmdResult("An unexpected error has occured. Please try again later.");
@@ -341,7 +341,7 @@ public class User extends Thread
 						continue;
 					}
 					else
-						auth = passwordAuth.authenticate(input);
+						auth = passwordAuth.authenticate(new String[] { input });
 						
 					if (auth)
 					{
