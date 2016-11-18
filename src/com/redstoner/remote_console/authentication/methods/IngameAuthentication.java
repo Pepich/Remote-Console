@@ -7,7 +7,7 @@ import com.redstoner.remote_console.protected_classes.UserManager;
 /**
  * This class represents the IngameAuthentication for IP and ingame confirmation based authentication
  * 
- * @author Pepich
+ * @author Pepich1851
  */
 
 public class IngameAuthentication extends AuthenticationMethod

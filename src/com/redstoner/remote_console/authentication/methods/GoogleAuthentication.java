@@ -19,7 +19,7 @@ import com.redstoner.remote_console.utils.TOTP;
 /**
  * This class represents the google authentication for 2FA
  * 
- * @author Pepich
+ * @author Pepich1851
  */
 
 public class GoogleAuthentication extends AuthenticationMethod

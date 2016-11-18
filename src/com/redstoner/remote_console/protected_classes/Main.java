@@ -21,7 +21,7 @@ import com.redstoner.remote_console.utils.ConsoleReader;
 /**
  * This class contains the test-mode entry point as well as the javaPlugin onEnable/onDisable methods
  * 
- * @author Pepich
+ * @author Pepich1851
  */
 
 public class Main extends JavaPlugin implements Listener

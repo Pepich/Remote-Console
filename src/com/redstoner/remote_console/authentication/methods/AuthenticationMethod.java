@@ -8,7 +8,7 @@ import com.redstoner.remote_console.protected_classes.Main;
 /**
  * This class represents a parent for all AuthenticationMethods
  * 
- * @author Pepich
+ * @author Pepich185
  */
 
 public abstract class AuthenticationMethod implements Serializable

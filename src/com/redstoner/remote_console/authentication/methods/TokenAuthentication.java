@@ -15,7 +15,7 @@ import com.redstoner.remote_console.protected_classes.UserManager;
  * This class represents the tokenAuthentication to allow for one-time username/token authentication when no password is set
  * or the user has forgotten his password. Will force a password-override if used.
  * 
- * @author Pepich
+ * @author Pepich1851
  */
 
 public class TokenAuthentication extends AuthenticationMethod

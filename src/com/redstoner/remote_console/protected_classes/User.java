@@ -27,7 +27,7 @@ import com.redstoner.remote_console.authentication.methods.TokenAuthentication;
 /**
  * This class represents a user in the remote console environment
  * 
- * @author Pepich
+ * @author Pepich1851
  */
 
 public class User extends Thread

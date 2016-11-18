@@ -26,7 +26,7 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 /**
  * This class represents a manager for the users connecting to and being connected to the plugin.
  * 
- * @author Pepich
+ * @author Pepich1851
  */
 
 public class UserManager extends Thread implements Listener

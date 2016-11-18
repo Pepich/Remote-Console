@@ -20,7 +20,7 @@ import com.redstoner.remote_console.protected_classes.UserManager;
 /**
  * This class represents the PasswordAuthentication to allow for username/password based authentication
  * 
- * @author Pepich
+ * @author Pepich1851
  */
 
 public class PasswordAuthentication extends AuthenticationMethod
