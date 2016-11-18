@@ -25,7 +25,7 @@ rmc.respectPerms=true<br/>
 \# Will only allow connections from LAN IP ranges (192.168.x.x, 10.x.x.x, 127.0.0.1)
 rmc.LANOnly=false<br/>
 \# Will only allow connections from VM IP ranges (10.x.x.x, 127.0.0.1)<br/>
-- rmc.VMOnly=false<br/>
+rmc.VMOnly=false<br/>
 \# Will only allow connections from local IPs (127.x.x.x) - These ones are overriding bottom to top. If localOnly is set, it will override the other two settings.<br/>
 rmc.localOnly=false<br/>
 \# Will disable the local join override permission. If not set, 127.0.0.1 will ALWAYS be able to connect<br/>
