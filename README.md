@@ -11,7 +11,7 @@ Configuration is possible through the file plugins/remoteconsole/remoteconsole.p
 To use those as launch parameters, add them to your launch script using --\<option\>.
 LAUNCH PARAMETERS WILL ALWAYS OVERRIDE YOUR CONFIG! If something doesn't work as expected, check if you have put a launch parameter before complaining that an option doesn't work properly.
 
------ NOTE: LAUNCH PARAMETERS ARE STILL WIP, CONFIG FILE WORKS. THIS IS THE DEFAULT CONFIG -----
+# DEFAULT CONFIG
 
 -rmc.datafolder="plugins/rmc" // Default data folder
 -rmc.log=true                 // Enable logging
@@ -40,8 +40,6 @@ LAUNCH PARAMETERS WILL ALWAYS OVERRIDE YOUR CONFIG! If something doesn't work as
 -rmc.tokencomplexity=3        // 1 = upppercase only, 2 = upper and lowercase, 3 = alphanumeric, 4 = alphanumeric and special chars.
 -rmc.suffix="§7[C]"           // The suffix to append to displaynames for chat and commands. Will only apply if the player is not online.
 -rmc.prefix=""                // Same as suffix, just as a prefix.
-
-// PERMISSIONS - please note that the base permission is not granted by any wildcard but must be specifically specified. This is for security reasons.
 -rmc.perm="rmc"                        // Required permission to do anything - NOT GRANTED BY WILDCARDS!
 -rmc.perm.connect="rmc.connect"        // Node to connect to the server
 -rmc.perm.auth="rmc.auth"              // Node to log in - please note that people with the connect permission can still receive broadcasts that don't require a login
@@ -52,7 +50,7 @@ LAUNCH PARAMETERS WILL ALWAYS OVERRIDE YOUR CONFIG! If something doesn't work as
 -rmc.perm.gettoken="rmc.gettoken"      // Node to generate a one-time token ingame
 -rmc.perm.list="rmc.list"              // Node to list all connected users
 
------ END OF CONFIG -----
+# FURTHER INFO:
 
 Requires PEX if respectPerms is set to true
 Requires an open port to bind to
