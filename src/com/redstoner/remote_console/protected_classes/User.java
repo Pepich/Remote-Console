@@ -160,7 +160,7 @@ public class User extends Thread
 		 *  2 = AES key exchange		| <AES KEY>					| "SRV-REQ-USN" (3)
 		 *  	RSA ENCRYPTED			|							|
 		 *  -----------------------------------------------------------------------------------------------------------------
-		 *  3 = Awaiting username		| <xxxxxusernamexxxxx>		| If username exists: "SRV-REQ-AUT" (4) or "SRV-REQ-IGA" (14)
+		 *  3 = Awaiting username		| <xxxxxusernamexxxxx>		| If username exists: "SRV-REQ-AUT" (4) or "SRV-REQ-IGA" (14) or "USR-NO-AUT" (6)
 		 *  	AES ENCRYPTED			|							| Else: "SRV-REQ-USN" (3)
 		 *  ----------------------------------------------------------------------------------------------------------
 		 *  4 = Awaiting authentication | <authentication>			| If authentication OK: "SRV-REQ-CMD" (6) or "SRV-REQ-2FA" (5)
@@ -176,11 +176,11 @@ public class User extends Thread
 		 *  
 		 *  6 = Authentication successful - awaiting commands. Further communication is AES ENCRYPTED.
 		 *  
-		 *  "xxxxx" resembles a five character long random sequence that in a best case scenario was generated cryptographically secure.
+		 *  "xxxxx" resembles a five character long random sequence that is supposed to be generated through a cryptographic secure algorithm
 		 */
 		
 		int authAttempts = 0;
-		while ((status != 5) && isRunning)
+		while ((status != 6) && isRunning)
 		{
 			switch (status)
 			{
@@ -253,7 +253,7 @@ public class User extends Thread
 					uuid = Bukkit.getOfflinePlayer(input).getUniqueId();
 					
 					// Check if the user is authorized to view console
-					if (UserManager.uuidAuthorized(uuid))
+					if (UserManager.mayConnect(uuid))
 					{
 						Player p = Bukkit.getPlayer(uuid);
 						if (p == null)
@@ -265,11 +265,19 @@ public class User extends Thread
 							status = 14;
 						else
 							status++;
+						if (!UserManager.mayAuthorize(uuid))
+						{
+							objectOut.writeObject(new SealedObject("USR-NO-AUT", ciphers.getNextAESEncode()));
+							objectOut.flush();
+							status = 6;
+							break;
+						}
+						// After having received the UUID and confirmed that the user is allowed to be authorized, invoke the load() method to load the authorization methods
 						load();
 					}
 					else
 					{
-						disconnect("No authorized user with the given username could be found!");
+						disconnect("No user with the required permissions to connect to the server could be found!");
 					}
 				}
 				catch (InvalidKeyException | ClassNotFoundException | IllegalBlockSizeException | BadPaddingException
@@ -282,7 +290,6 @@ public class User extends Thread
 				break;
 			case 4:
 				// Expecting AES ENCRYPTED <authentication>
-				
 				try
 				{
 					String type = tokenAuth == null ? "PWD" : "TKN";
@@ -295,12 +302,36 @@ public class User extends Thread
 					boolean auth = false;
 					
 					if (tokenAuth != null)
-						auth = tokenAuth.authenticate(input);
+					{
+						if (tokenAuth.authenticate(input))
+						{
+							for (int result = 0; result != 1;)
+							{
+								objectOut.writeObject(new SealedObject("SRV-REQ-PWO", ciphers.getNextAESEncode()));
+								objectOut.flush();
+								
+								input = (String[]) ((SealedObject) objectIn.readObject())
+										.getObject(ciphers.getNextAESDecode());
+										
+								if (input.length != 2) continue;
+								
+								result = passwordAuth.overridePassword(input[0], input[1]);
+								if (result == -2)
+									sendCmdResult("An unexpected error has occured. Please try again later.");
+								if (result == 0)
+									sendCmdResult("The passwords you entered do not match. Please try again.");
+							}
+							
+							status = 6;
+						}
+						continue;
+					}
 					else
 						auth = passwordAuth.authenticate(input);
 						
 					if (auth)
 					{
+						authAttempts = 0;
 						if (googleAuth != null)
 							status = 5;
 						else
@@ -325,15 +356,99 @@ public class User extends Thread
 				}
 				break;
 			case 5:
-				// Expecting AES ENCRYPTED <2FA>
+				try
+				{
+					String[] input = ((String[]) ((SealedObject) objectIn.readObject())
+							.getObject(ciphers.getNextAESDecode()));
+					if (googleAuth.authenticate(input))
+					{
+						status = 6;
+						authAttempts = 0;
+					}
+					else
+					{
+						authAttempts++;
+					}
+					if (authAttempts == 3)
+					{
+						disconnect("Too many invalid authentication attempts!");
+					}
+				}
+				catch (InvalidKeyException | ClassNotFoundException | IllegalBlockSizeException | BadPaddingException
+						| InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchPaddingException
+						| IOException e)
+				{
+					disconnect("An unexpected exception occured, closing connection.");
+				}
 				break;
 			case 14:
-				// Excepting AES ENCRYPTED <yes/no>
+				try
+				{
+					objectOut.writeObject(new SealedObject("SRV-REQ-IGA", ciphers.getNextAESEncode()));
+					objectOut.flush();
+					
+					String input = ((String) ((SealedObject) objectIn.readObject())
+							.getObject(ciphers.getNextAESDecode()));
+					if (input.equals("yes"))
+					{
+						if (ingameAuth.authenticate(null))
+							status = 6;
+						else
+						{
+							status = 4;
+						}
+					}
+					else if (input.equals("no"))
+					{
+						status = 4;
+					}
+				}
+				catch (InvalidKeyException | ClassNotFoundException | IllegalBlockSizeException | BadPaddingException
+						| InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchPaddingException
+						| IOException e)
+				{
+					disconnect("An unexpected exception occured, closing connection.");
+				}
 				break;
 			}
 		}
 		
 		player = new FakePlayer(Bukkit.getOfflinePlayer(uuid), UserManager.getLastDisplayName(uuid), this);
+		
+		if (passwordAuth.isExpired())
+		{
+			try
+			{
+				for (int result = 0; result != 1;)
+				{
+					objectOut.writeObject(new SealedObject("SRV-REQ-PWC", ciphers.getNextAESEncode()));
+					objectOut.flush();
+					
+					String[] input = ((String[]) ((SealedObject) objectIn.readObject())
+							.getObject(ciphers.getNextAESDecode()));
+							
+					result = passwordAuth.changePassword(input[0], input[1], input[2]);
+					if (result == -2) disconnect("An unexpected exception occured, closing connection.");
+				}
+			}
+			catch (InvalidKeyException | IllegalBlockSizeException | NoSuchAlgorithmException | NoSuchPaddingException
+					| InvalidAlgorithmParameterException | IOException | ClassNotFoundException
+					| BadPaddingException e1)
+			{
+				disconnect("An unexpected exception occured, closing connection.");
+			}
+		}
+		
+		try
+		{
+			objectOut.writeObject(new SealedObject("SRV-REQ-CMD", ciphers.getNextAESEncode()));
+			objectOut.flush();
+		}
+		catch (InvalidKeyException | IllegalBlockSizeException | NoSuchAlgorithmException | NoSuchPaddingException
+				| InvalidAlgorithmParameterException | IOException e1)
+		{
+			disconnect("An unexpected exception occured, closing connection.");
+		}
 		
 		while (isRunning)
 		{
@@ -341,9 +456,10 @@ public class User extends Thread
 			{
 				String input = (String) ((SealedObject) objectIn.readObject()).getObject(ciphers.getNextAESDecode());
 				if (input.startsWith("USR:"))
-					player.compute(input.replaceFirst("USR:", "").replaceAll("  ", "").trim());
-				if (input.startsWith("CMD:")) sendCmdResult(compute(input.replaceFirst("CMD:", "").trim()));
-				
+					player.compute(input.replaceFirst("USR:", "").replaceAll("  ", " ").trim());
+				if (input.startsWith("CMD:"))
+					sendCmdResult(compute(input.replaceFirst("CMD:", "").replaceAll("  ", " ").trim()));
+					
 			}
 			catch (InvalidKeyException | IllegalBlockSizeException | NoSuchAlgorithmException | NoSuchPaddingException
 					| InvalidAlgorithmParameterException | IOException | ClassNotFoundException | BadPaddingException e)
@@ -375,6 +491,17 @@ public class User extends Thread
 				sb.append((displayName ? u.player.getDisplayName() : (u.player.getName() + "[§7C]")) + ", ");
 			}
 			return sb.toString();
+		}
+		if (input.startsWith("cgpass"))
+		{
+			String[] args = input.split(" ");
+			if (args.length < 4) return "Not enough parameters specified";
+			if (args.length > 4) return "Too many parameters specified";
+			int result = passwordAuth.changePassword(args[1], args[2], args[3]);
+			if (result == -2) return "An unexpected error has occured. Please try again later.";
+			if (result == -1) return "You have entered the wrong password. Please try again.";
+			if (result == 0) return "The passwords you entered do not match. Please try again.";
+			if (result == 1) return "Your password has been changed successfully.";
 		}
 		return null;
 	}
