@@ -12,6 +12,11 @@ import org.bukkit.permissions.Permission;
 
 import com.redstoner.remote_console.utils.ConfigHandler;
 
+/**
+ * This class creates a FakePlayer used for sending chat messages and running commands without having an actual online player.
+ * 
+ * @author Pepich1851
+ */
 public class FakePlayer extends CraftPlayer implements Player
 {
 	private String displayName = "MissingName";
