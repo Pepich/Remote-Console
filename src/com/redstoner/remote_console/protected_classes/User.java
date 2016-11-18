@@ -329,11 +329,7 @@ public class User extends Thread
 									sendCmdResult("An unexpected error has occured. Please try again later.");
 									continue;
 								}
-								if (result == 0)
-								{
-									sendCmdResult("The passwords you entered do not match. Please try again.");
-									continue;
-								}
+								if (result == 0) continue;
 							}
 							
 							status = 6;
@@ -341,8 +337,12 @@ public class User extends Thread
 						continue;
 					}
 					else
-						auth = passwordAuth.authenticate(new String[] { input });
-						
+					{
+						if (passwordAuth != null)
+							auth = passwordAuth.authenticate(new String[] { input });
+						else
+							disconnect("Couldn't find a working authentication method.");
+					}
 					if (auth)
 					{
 						authAttempts = 0;
@@ -365,7 +365,6 @@ public class User extends Thread
 						| InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchPaddingException
 						| IOException e)
 				{
-					e.printStackTrace();
 					disconnect("An unexpected exception occured, closing connection.");
 				}
 				break;
