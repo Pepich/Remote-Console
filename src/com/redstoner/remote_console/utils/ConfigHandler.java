@@ -151,11 +151,11 @@ public class ConfigHandler
 					return false;
 				else
 					throw new InvalidObjectException(
-							"The value found at " + path + "could not be deserialized into an int.");
+							"The value found at " + path + "could not be deserialized into a boolean.");
 			}
 			else
 				throw new InvalidObjectException(
-						"The value found at " + path + "could not be deserialized into an int.");
+						"The value found at " + path + "could not be deserialized into a boolean.");
 		}
 		
 	}
@@ -170,7 +170,10 @@ public class ConfigHandler
 	 */
 	public static String getString(String path) throws NoSuchElementException, InvalidObjectException
 	{
-		if (properties.getProperty(path) == null) throw new NoSuchElementException("Could not find object at " + path);
+		String raw = properties.getProperty(path);
+		if (raw == null) throw new NoSuchElementException("Could not find object at " + path);
+		if (!raw.startsWith("\"") || !raw.endsWith("\""))
+			throw new InvalidObjectException("The value found at " + path + "could not be deserailized into a String.");
 		return properties.getProperty(path);
 	}
 	
