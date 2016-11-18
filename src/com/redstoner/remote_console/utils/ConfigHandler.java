@@ -1,8 +1,11 @@
 package com.redstoner.remote_console.utils;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.InvalidObjectException;
@@ -39,6 +42,23 @@ public class ConfigHandler
 					ConfigHandler.class.getResourceAsStream("/defaultconfig.properties"));
 			defaultProps.load(defaultIn);
 			defaultIn.close();
+			if (!propertiesFile.exists())
+			{
+				Main.logger.info("Missing config file. Restoring defaults...");
+				propertiesFile.createNewFile();
+				BufferedReader reader = new BufferedReader(
+						new InputStreamReader(ConfigHandler.class.getResourceAsStream("/defaultconfig.properties")));
+				BufferedWriter writer = new BufferedWriter(new FileWriter(propertiesFile));
+				String line = "";
+				while ((line = reader.readLine()) != null)
+				{
+					writer.write(line);
+					writer.newLine();
+				}
+				writer.flush();
+				reader.close();
+				writer.close();
+			}
 			FileInputStream customIn = new FileInputStream(propertiesFile);
 			properties.load(customIn);
 			customIn.close();
