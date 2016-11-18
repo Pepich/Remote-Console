@@ -124,6 +124,7 @@ class Ciphers
 			BadPaddingException, InvalidAlgorithmParameterException
 	{
 		File privateKeyFile = new File(Main.getDataLocation(), "rsa_private_key");
+		Main.logger.info("Trying to load the rsa key file from " + privateKeyFile.getAbsolutePath());
 		FileInputStream fileInputStream = new FileInputStream(privateKeyFile);
 		
 		byte[] encodedPrivateKey = new byte[(int) privateKeyFile.length()];
@@ -136,6 +137,7 @@ class Ciphers
 		
 		RSA_DECODE = Cipher.getInstance("RSA");
 		RSA_DECODE.init(Cipher.DECRYPT_MODE, RSA_PRIVATE_KEY);
+		Main.logger.info("Found RSA key and loaded it!");
 	}
 	
 	/**

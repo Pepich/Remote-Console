@@ -62,9 +62,15 @@ public class User extends Thread
 	 */
 	public User(Socket connection) throws IOException
 	{
+		Main.logger.info("New client connected with IP: " + connection.getInetAddress());
 		this.connection = connection;
-		this.objectIn = new ObjectInputStream(connection.getInputStream());
+		connection.getOutputStream().flush();
+		Main.logger.info("Flushed output stream");
 		this.objectOut = new ObjectOutputStream(connection.getOutputStream());
+		objectOut.flush();
+		Main.logger.info("Flushed objectOut");
+		this.objectIn = new ObjectInputStream(connection.getInputStream());
+		Main.logger.info("Got input stream");
 	}
 	
 	/**

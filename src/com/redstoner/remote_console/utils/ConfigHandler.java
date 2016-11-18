@@ -194,7 +194,7 @@ public class ConfigHandler
 		if (raw == null) throw new NoSuchElementException("Could not find object at " + path);
 		if (!raw.startsWith("\"") || !raw.endsWith("\""))
 			throw new InvalidObjectException("The value found at " + path + "could not be deserailized into a String.");
-		return properties.getProperty(path);
+		return raw.substring(1, raw.length() - 1);
 	}
 	
 	/**

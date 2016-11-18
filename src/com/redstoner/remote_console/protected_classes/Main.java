@@ -2,7 +2,17 @@ package com.redstoner.remote_console.protected_classes;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.util.NoSuchElementException;
 import java.util.logging.Logger;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -42,10 +52,29 @@ public class Main extends JavaPlugin implements Listener
 		
 		try
 		{
+			dataLocation = ConfigHandler.getFile("rmc.datafolder");
+		}
+		catch (InvalidObjectException | NoSuchElementException e1)
+		{
+			e1.printStackTrace();
+		}
+		
+		try
+		{
+			Ciphers.initRSA();
+		}
+		catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeySpecException
+				| ClassNotFoundException | IllegalBlockSizeException | BadPaddingException
+				| InvalidAlgorithmParameterException | IOException e)
+		{
+			e.printStackTrace();
+		}
+		
+		try
+		{
 			userManager = UserManager.getInstance(ConfigHandler.getInt("rmc.port"));
 			userManager.start();
 			
-			dataLocation = ConfigHandler.getFile("rmc.datafolder");
 		}
 		catch (IOException e)
 		{
