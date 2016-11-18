@@ -12,9 +12,10 @@ To use those as launch parameters, add them to your launch script using --\<opti
 LAUNCH PARAMETERS WILL ALWAYS OVERRIDE YOUR CONFIG! If something doesn't work as expected, check if you have put a launch parameter before complaining that an option doesn't work properly.
 
 # DEFAULT CONFIG
-
-- rmc.datafolder="plugins/rmc" // Default data folder
-- rmc.log=true                 // Enable logging
+\# Default data folder
+rmc.datafolder="plugins/rmc"
+\# Enable logging
+rmc.log=true
 - rmc.log.path="latest.log"    // Path to the logfile. Will be stored in the data folder
 - rmc.debug=0                  // Sets the debug output level to X (currently it will always print all outputs)
 - rmc.noAuth=false             // Allows users to read console without authentication. Sending messages will still require authentication. HANDLE WITH CARE!
