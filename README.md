@@ -12,6 +12,7 @@ To use those as launch parameters, add them to your launch script using --\<opti
 LAUNCH PARAMETERS WILL ALWAYS OVERRIDE YOUR CONFIG! If something doesn't work as expected, check if you have put a launch parameter before complaining that an option doesn't work properly.
 
 ----- NOTE: LAUNCH PARAMETERS ARE STILL WIP, CONFIG FILE WORKS. THIS IS THE DEFAULT CONFIG -----
+
 -rmc.datafolder="plugins/rmc" // Default data folder
 -rmc.log=true                 // Enable logging
 -rmc.log.path="latest.log"    // Path to the logfile. Will be stored in the data folder
@@ -23,14 +24,7 @@ LAUNCH PARAMETERS WILL ALWAYS OVERRIDE YOUR CONFIG! If something doesn't work as
 -rmc.localOnly=false          // Will only allow connections from local IPs (127.x.x.x) - These ones are overriding bottom to top. If localOnly is set, it will override the other two settings.
 -rmc.noLocal=false            // Will disable the local join override permission. If not set, 127.0.0.1 will ALWAYS be able to connect
 -rmc.localnoauth=true         // Will allow localhost connections to authenticate as any user without a password.
--rmc.whitelist=[]             // Will only allow connections from certain IP ranges. Allows the following style:
-/\*
-[] - all IPs are allowed to join
-["192.168.1.1"] - allows only that IP to join
-["192.168.1.\*',"192.168.[5-7].\*"] - allows addresses 192.168.1.\*, 192.168.5.\*, 192.168.6.\*, 192.168.7.\*
-["192.168.[1,5-7].\*"] - a shorter representation of the previous one
-["192.168.[1-3].\*","!192.168.2.46"] - allows 192.168.[1-3].* except exact address 192.168.2.46. Most right will override most left.
-\*/
+-rmc.whitelist=[]             // Will only allow connections from certain IP ranges. Allows for ranges and wildcards. Use "!\<IP>" to blacklist an IP
 -rmc.port=9000                // Specifies the port to bind to.
 -rmc.allowignauth=true        // Enables authentication through an ingame command when the user is online.
 -rnc.ignauth.checkIP=true     // Compare the IPs and only allow ingame authentication if the IPs of the online user and the rmc user match.
