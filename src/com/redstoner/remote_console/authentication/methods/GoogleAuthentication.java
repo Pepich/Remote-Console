@@ -13,7 +13,6 @@ import java.util.UUID;
 import org.apache.commons.codec.binary.Base32;
 
 import com.redstoner.remote_console.protected_classes.Main;
-import com.redstoner.remote_console.protected_classes.UserManager;
 import com.redstoner.remote_console.utils.TOTP;
 
 /**
@@ -65,11 +64,6 @@ public class GoogleAuthentication extends AuthenticationMethod
 		{
 			e.printStackTrace();
 		}
-	}
-	
-	public static void register()
-	{
-		UserManager.registerAuthMethod("Google-Auth", GoogleAuthentication.class);
 	}
 	
 	public static GoogleAuthentication load(UUID uuid)

@@ -5,11 +5,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import org.apache.logging.log4j.core.LogEvent;
@@ -19,7 +21,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import com.redstoner.remote_console.authentication.methods.AuthenticationMethod;
+import com.redstoner.remote_console.utils.ConfigHandler;
 
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
@@ -36,7 +38,7 @@ public class UserManager extends Thread implements Listener
 	
 	private static ArrayList<User> connectedUsers = new ArrayList<User>();
 	
-	private static HashMap<String, Class<? extends AuthenticationMethod>> authMethods = new HashMap<String, Class<? extends AuthenticationMethod>>();
+	//	private static HashMap<String, Class<? extends AuthenticationMethod>> authMethods = new HashMap<String, Class<? extends AuthenticationMethod>>();
 	private static HashMap<UUID, String> displayNames;
 	
 	/**
@@ -114,31 +116,6 @@ public class UserManager extends Thread implements Listener
 		return instance;
 	}
 	
-	/**
-	 * This method will look up the given name in the AuthenticationMethod list and if found return the corresponding class.
-	 * 
-	 * @param name the name of the AuthenticationMethod used at registration
-	 * @return the class of the AuthenticationMethod
-	 */
-	
-	public Class<? extends AuthenticationMethod> getAuthenticationMethod(String name)
-	{
-		return authMethods.get(name);
-	}
-	
-	/**
-	 * This method registers a new Authentication method to allow for dynamic loading.
-	 * Authentication methods that were not registered can't be loaded on runtime and will be ignored.
-	 * 
-	 * @param name the name to assign to the AuthenticationMethod
-	 * @param method the class of the AuthenticationMethod that is to be registered
-	 */
-	public static void registerAuthMethod(String name, Class<? extends AuthenticationMethod> clazz)
-	{
-		Main.logger.info("Registered authentication method: " + name);
-		authMethods.put(name, clazz);
-	}
-	
 	private boolean running = false;
 	
 	/**
@@ -196,14 +173,41 @@ public class UserManager extends Thread implements Listener
 	}
 	
 	/**
+	 * This method checks if the user with the given UUID is allowed to authorize them self on the server.
+	 * 
+	 * @param uuid the UUID to check
+	 * @return true if the user with the given UUID has the required permissions to authorize them self
+	 */
+	protected static boolean mayAuthorize(UUID uuid)
+	{
+		try
+		{
+			String permissionNode = ConfigHandler.getString("rmc.perm.auth");
+			return hasOfflinePEXPermission(Bukkit.getOfflinePlayer(uuid).getName(), permissionNode);
+		}
+		catch (InvalidObjectException | NoSuchElementException e)
+		{
+			return false;
+		}
+	}
+	
+	/**
 	 * This method checks if the user with the given UUID is allowed to connect to the server.
 	 * 
 	 * @param uuid the UUID to check
 	 * @return true if the user with the given UUID has the required permissions to connect
 	 */
-	protected static boolean uuidAuthorized(UUID uuid)
+	public static boolean mayConnect(UUID uuid)
 	{
-		return hasOfflinePEXPermission(Bukkit.getOfflinePlayer(uuid).getName(), "remoteconsole.connect");
+		try
+		{
+			String permissionNode = ConfigHandler.getString("rmc.perm.connect");
+			return hasOfflinePEXPermission(Bukkit.getOfflinePlayer(uuid).getName(), permissionNode);
+		}
+		catch (InvalidObjectException | NoSuchElementException e)
+		{
+			return false;
+		}
 	}
 	
 	/**

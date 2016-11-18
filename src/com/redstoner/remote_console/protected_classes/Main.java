@@ -12,10 +12,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.redstoner.remote_console.authentication.methods.GoogleAuthentication;
-import com.redstoner.remote_console.authentication.methods.IngameAuthentication;
-import com.redstoner.remote_console.authentication.methods.PasswordAuthentication;
-import com.redstoner.remote_console.authentication.methods.TokenAuthentication;
 import com.redstoner.remote_console.utils.ConsoleReader;
 
 /**
@@ -41,7 +37,6 @@ public class Main extends JavaPlugin implements Listener
 	{
 		plugin = this;
 		logger = this.getLogger();
-		registerClasses();
 		
 		ConsoleReader.init();
 		
@@ -89,17 +84,6 @@ public class Main extends JavaPlugin implements Listener
 	public void onDisable()
 	{
 		userManager.quit();
-	}
-	
-	/**
-	 * This method will register all necessary classes that are getting loaded on runtime
-	 */
-	public static void registerClasses()
-	{
-		GoogleAuthentication.register();
-		IngameAuthentication.register();
-		PasswordAuthentication.register();
-		TokenAuthentication.register();
 	}
 	
 	/**

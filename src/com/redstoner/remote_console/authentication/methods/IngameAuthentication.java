@@ -2,8 +2,6 @@ package com.redstoner.remote_console.authentication.methods;
 
 import java.util.UUID;
 
-import com.redstoner.remote_console.protected_classes.UserManager;
-
 /**
  * This class represents the IngameAuthentication for IP and ingame confirmation based authentication
  * 
@@ -36,11 +34,6 @@ public class IngameAuthentication extends AuthenticationMethod
 	public void save()
 	{
 	
-	}
-	
-	public static void register()
-	{
-		UserManager.registerAuthMethod("Ingame-Auth", IngameAuthentication.class);
 	}
 	
 	/**

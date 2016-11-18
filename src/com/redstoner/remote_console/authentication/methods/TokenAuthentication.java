@@ -9,7 +9,6 @@ import java.io.ObjectOutputStream;
 import java.util.UUID;
 
 import com.redstoner.remote_console.protected_classes.Main;
-import com.redstoner.remote_console.protected_classes.UserManager;
 
 /**
  * This class represents the tokenAuthentication to allow for one-time username/token authentication when no password is set
@@ -61,11 +60,6 @@ public class TokenAuthentication extends AuthenticationMethod
 		{
 			e.printStackTrace();
 		}
-	}
-	
-	public static void register()
-	{
-		UserManager.registerAuthMethod("Token-Auth", TokenAuthentication.class);
 	}
 	
 	public static TokenAuthentication load(UUID uuid)
