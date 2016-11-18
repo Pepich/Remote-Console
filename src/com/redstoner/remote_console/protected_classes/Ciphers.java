@@ -123,7 +123,7 @@ class Ciphers
 			InvalidKeySpecException, InvalidKeyException, ClassNotFoundException, IllegalBlockSizeException,
 			BadPaddingException, InvalidAlgorithmParameterException
 	{
-		File privateKeyFile = new File("private_key");
+		File privateKeyFile = new File(Main.getDataLocation(), "rsa_private_key");
 		FileInputStream fileInputStream = new FileInputStream(privateKeyFile);
 		
 		byte[] encodedPrivateKey = new byte[(int) privateKeyFile.length()];
