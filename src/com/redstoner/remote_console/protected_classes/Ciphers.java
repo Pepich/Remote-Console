@@ -142,13 +142,18 @@ class Ciphers
 	 * @param seed the seed used to generate the byte[]
 	 * @return the generated array of bytes
 	 */
-	
 	public static byte[] getRandomBytes(int length, int seed)
 	{
 		byte[] bytes = new byte[length];
-		
-		// TODO: put pseudo-random byte[] generation in place
-		
+		String s = "" + seed;
+		byte[] sbytes = s.getBytes();
+		for (int i = 0; i <= length / s.length(); i++)
+		{
+			for (int j = 0; j < s.length() && i * s.length() + j < length; j++)
+			{
+				bytes[i * s.length() + j] = (byte) (sbytes[j] + Math.pow(10, i));
+			}
+		}
 		return bytes;
 	}
 }
