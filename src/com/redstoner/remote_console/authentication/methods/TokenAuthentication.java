@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.UUID;
 
 import com.redstoner.remote_console.protected_classes.Main;
@@ -17,7 +18,7 @@ import com.redstoner.remote_console.protected_classes.Main;
  * @author Pepich1851
  */
 
-public class TokenAuthentication extends AuthenticationMethod
+public class TokenAuthentication extends AuthenticationMethod implements Serializable
 {
 	private static final long serialVersionUID = -8791920149131750868L;
 	private final String token;

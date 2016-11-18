@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -21,7 +22,7 @@ import com.redstoner.remote_console.utils.TOTP;
  * @author Pepich1851
  */
 
-public class GoogleAuthentication extends AuthenticationMethod
+public class GoogleAuthentication extends AuthenticationMethod implements Serializable
 {
 	private static final long serialVersionUID = 5531038871418983654L;
 	private String secretKey;

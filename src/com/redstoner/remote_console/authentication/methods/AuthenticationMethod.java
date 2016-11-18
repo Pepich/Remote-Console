@@ -36,7 +36,7 @@ public abstract class AuthenticationMethod implements Serializable
 	 * @param user the owner of this AuthenticationMethod
 	 */
 	
-	public AuthenticationMethod(UUID uuid)
+	protected AuthenticationMethod(UUID uuid)
 	{
 		this.uuid = uuid;
 	}
