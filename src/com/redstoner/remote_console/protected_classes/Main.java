@@ -27,6 +27,7 @@ public class Main extends JavaPlugin implements Listener
 	private static UserManager userManager;
 	public static Logger logger = null;
 	private static Plugin plugin;
+	private static File dataLocation;
 	
 	/**
 	 * This method will be called on plugin enable and will set up the required environment
@@ -43,11 +44,12 @@ public class Main extends JavaPlugin implements Listener
 		{
 			userManager = UserManager.getInstance(ConfigHandler.getInt("rmc.port"));
 			userManager.start();
+			
+			dataLocation = ConfigHandler.getFile("rmc.datafolder");
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
-			// TODO: Add error message
+			logger.severe("Could not finish setting up the resources. Exiting now.");
 			getPluginLoader().disablePlugin(this);
 			return;
 		}
@@ -98,6 +100,6 @@ public class Main extends JavaPlugin implements Listener
 	 */
 	public static File getDataLocation()
 	{
-		return new File("plugins/remoteconsole/");
+		return dataLocation;
 	}
 }
