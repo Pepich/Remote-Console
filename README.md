@@ -27,40 +27,81 @@ rmc.LANOnly=false<br/>
 \# Will only allow connections from VM IP ranges (10.x.x.x, 127.0.0.1)<br/>
 - rmc.VMOnly=false<br/>
 \# Will only allow connections from local IPs (127.x.x.x) - These ones are overriding bottom to top. If localOnly is set, it will override the other two settings.<br/>
-- rmc.localOnly=false<br/>
-- rmc.noLocal=false            // Will disable the local join override permission. If not set, 127.0.0.1 will ALWAYS be able to connect
-- rmc.localnoauth=true         // Will allow localhost connections to authenticate as any user without a password.
-- rmc.whitelist=[]             // Will only allow connections from certain IP ranges. Allows for ranges and wildcards. Use "!\<IP>" to blacklist an IP
-- rmc.port=9000                // Specifies the port to bind to.
-- rmc.allowignauth=true        // Enables authentication through an ingame command when the user is online.
-- rnc.ignauth.checkIP=true     // Compare the IPs and only allow ingame authentication if the IPs of the online user and the rmc user match.
-- rmc.allowtoken=true          // Enables token authentication (tokens are invalidated after first use).
-- rmc.allowpw=true             // Enables password authentication.
-- rmc.allow2fa=true            // Enables google 2FA.
-- rmc.allowkey=true            // Not implemented yet. Will allow the use of private/public keypairs for authentication.
-- rmc.force2FA=false           // Force users to use g-auth 2FA.
-- rmc.minpwlength=8            // Specifies the minimum required password length.
-- rmc.pwpattern="luns"         // l/u = requires lowercase/uppercase | n = requires number | s = requires special char (like !).
-- rmc.pwexpire=-1              // time in seconds until the password expires. -1 = never. Allows for use of patterns like 30d5h3s
-- rmc.tokenlenght=6            // defines the token length. Will form a pattern of xxxx-xx.
-- rmc.tokencomplexity=3        // 1 = upppercase only, 2 = upper and lowercase, 3 = alphanumeric, 4 = alphanumeric and special chars.
-- rmc.suffix="§7[C]"           // The suffix to append to displaynames for chat and commands. Will only apply if the player is not online.
-- rmc.prefix=""                // Same as suffix, just as a prefix.
-- rmc.perm="rmc"                        // Required permission to do anything - NOT GRANTED BY WILDCARDS!
-- rmc.perm.connect="rmc.connect"        // Node to connect to the server
-- rmc.perm.auth="rmc.auth"              // Node to log in - please note that people with the connect permission can still receive broadcasts that don't require a login
-- rmc.perm.read="rmc.read"              // Node to read the console output
-- rmc.perm.write="rmc.write"            // Node to send any data
-- rmc.perm.write.chat="rmc.write.chat"  // Node to send chat messages
-- rmc.perm.write.cmd="rmc.write.cmd"    // Node to run commands
-- rmc.perm.gettoken="rmc.gettoken"      // Node to generate a one-time token ingame
-- rmc.perm.list="rmc.list"              // Node to list all connected users
+rmc.localOnly=false<br/>
+\# Will disable the local join override permission. If not set, 127.0.0.1 will ALWAYS be able to connect<br/>
+rmc.noLocal=false<br/>
+\# Will allow localhost connections to authenticate as any user without a password. Meant for debug purposes only. HANDLE WITH CARE!<br/>
+rmc.localnoauth=false<br/>
+\# Will only allow connections from certain IP ranges.<br/>
+\# Exmaples:
+\# [] - IP whitelist disabled. Allow all connections.
+\# If only negative IPs are added or the entire list is prefixed with an !, the whitelist will act as a blacklist, allowing everything except the listed IPs:
+\# !["127.0.0.1", "192.168.1.\*"] - Acts as blacklist, allows everyone except localhost and 192.168.1.xxx<br/>
+\# ["!127.0.0.1", "!192.168.1.\*"] - Same as above, just more complicated. Useful if you want to combine white and blacklist.<br/>
+\# ["192.168.1.\*"] - Allows connections from all IPs starting with 192.168.1<br/>
+rmc.whitelist=[]<br/>
+\# ["192.168.[1-3].\*", "192.168.5.\*", "!192.168.1.1"] - Allows for all IPs that are in the following range:<br/>
+\# 192.168.1.\*, 192.168.2.\*, 192.168.3.\*, 192.168.5.\* - but blocks 192.168.1.1 specifically. Overrides right to left -> if you allow a range, then block a certain IP it will block that IP. If you block a range, then allow a certain IP it will allow it. If you allow a certain IP, then block a range it will block it.<br/>
+\# ["192.168.[1-3,5].\*","!192.168.1.1"] - same as above, just a little shorter.<br/>
+\# Specifies the port to bind to.<br/>
+rmc.port=9000<br/>
+\# Enables authentication through an ingame command when the user is online.<br/>
+rmc.allowignauth=true<br/>
+\# Compare the IPs and only allow ingame authentication if the IPs of the online user and the rmc user match.<br/>
+rnc.ignauth.checkIP=true<br/>
+\# Enables token authentication (tokens are invalidated after first use).<br/>
+rmc.allowtoken=true<br/>
+\# Enables password authentication.<br/>
+rmc.allowpw=true<br/>
+\# Enables google 2FA.<br/>
+rmc.allow2fa=true<br/>
+\# Not implemented yet. Will allow the use of private/public keypairs for authentication.<br/>
+rmc.allowkey=true<br/>
+\# Force users to use g-auth 2FA.<br/>
+rmc.force2FA=false<br/>
+\# Specifies the minimum required password length.<br/>
+rmc.minpwlength=8<br/>
+\# Specifies a passwort pattern/requirement. If added, at least one of that type of char is required.
+\# l/u = requires lowercase/uppercase | n = requires number | s = requires special chars (like !).<br/>
+rmc.pwpattern="lu"<br/>
+\# Time in seconds until the password expires. -1 = never. Allows for use of patterns like 30d5h3s<br/>
+rmc.pwexpire=-1<br/>
+\# Defines the token length. Will form a pattern of xxxx-xx.<br/>
+rmc.tokenlenght=6<br/>
+\# Defines the token complexity.<br/>
+\# 1 = upppercase only, 2 = upper and lowercase, 3 = alphanumeric, 4 = alphanumeric and special chars.<br/>
+rmc.tokencomplexity=3<br/>
+\# he suffix to append to displaynames for chat and commands. Will only apply if the player is not online.<br/>
+rmc.suffix="§7[C]"<br/>
+\# Same as suffix, just as a prefix.<br/>
+rmc.prefix=""<br/><br/>
+\# ----- PERMISSIONS -  Please note that these only work when the player is online or PEX is installed.-----<br/><br/>
+\# Required permission to do anything - NOT GRANTED BY WILDCARDS!<br/>
+rmc.perm="rmc"<br/>
+\# Node to connect to the server<br/>
+rmc.perm.connect="rmc.connect"<br/>
+\# Node to log in - please note that people with the connect permission can still receive broadcasts that don't require a login<br/>
+rmc.perm.auth="rmc.auth"<br/>
+\# Node to read the console output<br/>
+rmc.perm.read="rmc.read"<br/>
+\# Node to send any data<br/>
+rmc.perm.write="rmc.write"<br/>
+\# Node to send chat messages<br/>
+rmc.perm.write.chat="rmc.write.chat"<br/>
+\# Node to run commands<br/>
+rmc.perm.write.cmd="rmc.write.cmd"<br/>
+\# Node to generate a one-time token ingame<br/>
+rmc.perm.gettoken="rmc.gettoken"<br/>
+\# Node to list all connected users<br/>
+rmc.perm.list="rmc.list"<br/>
+
+\# ----- END OF CONFIG -----
 
 # FURTHER INFO:
 
-Requires PEX if respectPerms is set to true
-Requires an open port to bind to
-Requires rw access to plugins/remoteconsole/*
+- Requires PEX if respectPerms is set to true
+- Requires an open port to bind to
+- Requires rw access to \<datafolder\>*
 
 # WIP SECTION:
 
