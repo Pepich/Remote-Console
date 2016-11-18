@@ -12,6 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.redstoner.remote_console.utils.ConfigHandler;
 import com.redstoner.remote_console.utils.ConsoleReader;
 
 /**
@@ -24,9 +25,7 @@ public class Main extends JavaPlugin implements Listener
 {
 	
 	private static UserManager userManager;
-	
 	public static Logger logger = null;
-	
 	private static Plugin plugin;
 	
 	/**
@@ -42,7 +41,7 @@ public class Main extends JavaPlugin implements Listener
 		
 		try
 		{
-			userManager = UserManager.getInstance(9000);
+			userManager = UserManager.getInstance(ConfigHandler.getInt("rmc.port"));
 			userManager.start();
 		}
 		catch (IOException e)
