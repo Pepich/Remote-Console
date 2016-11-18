@@ -12,17 +12,22 @@ To use those as launch parameters, add them to your launch script using --\<opti
 LAUNCH PARAMETERS WILL ALWAYS OVERRIDE YOUR CONFIG! If something doesn't work as expected, check if you have put a launch parameter before complaining that an option doesn't work properly.
 
 # DEFAULT CONFIG
-\# Default data folder<br>
-rmc.datafolder="plugins/rmc"
-\# Enable logging
-rmc.log=true
-- rmc.log.path="latest.log"    // Path to the logfile. Will be stored in the data folder
-- rmc.debug=0                  // Sets the debug output level to X (currently it will always print all outputs)
-- rmc.noAuth=false             // Allows users to read console without authentication. Sending messages will still require authentication. HANDLE WITH CARE!
-- rmc.respectPerms=true        // Enables permission respecting commands. If set to false, users can run anything with elevated permissions. HANDLE WITH CARE!
-- rmc.LANOnly=false            // Will only allow connections from LAN IP ranges (192.168.x.x, 10.x.x.x, 127.0.0.1)
-- rmc.VMOnly=false             // Will only allow connections from VM IP ranges (10.x.x.x, 127.0.0.1)
-- rmc.localOnly=false          // Will only allow connections from local IPs (127.x.x.x) - These ones are overriding bottom to top. If localOnly is set, it will override the other two settings.
+\# Default data folder<br/>
+rmc.datafolder="plugins/remoteconsole"<br/>
+\# Enable logging<br/>
+rmc.log=true<br/>
+\# Path to the logfile. Path to the datafolder will be put in front<br/>
+rmc.log.path="latest.log"<br/>
+\# Allows users to read console without authentication. Sending messages will still require authentication. HANDLE WITH CARE!<br/>
+rmc.noAuth=false<br/>
+\# Enables permission respecting commands. If set to false, users can run anything with elevated permissions. HANDLE WITH CARE!<br/>
+rmc.respectPerms=true<br/>
+\# Will only allow connections from LAN IP ranges (192.168.x.x, 10.x.x.x, 127.0.0.1)
+rmc.LANOnly=false<br/>
+\# Will only allow connections from VM IP ranges (10.x.x.x, 127.0.0.1)<br/>
+- rmc.VMOnly=false<br/>
+\# Will only allow connections from local IPs (127.x.x.x) - These ones are overriding bottom to top. If localOnly is set, it will override the other two settings.<br/>
+- rmc.localOnly=false<br/>
 - rmc.noLocal=false            // Will disable the local join override permission. If not set, 127.0.0.1 will ALWAYS be able to connect
 - rmc.localnoauth=true         // Will allow localhost connections to authenticate as any user without a password.
 - rmc.whitelist=[]             // Will only allow connections from certain IP ranges. Allows for ranges and wildcards. Use "!\<IP>" to blacklist an IP
