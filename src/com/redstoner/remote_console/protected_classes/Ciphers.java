@@ -56,6 +56,9 @@ class Ciphers
 		
 		System.out.println(
 				new SealedObject("AES key test succesfull!", getNextAESEncode()).getObject(getNextAESDecode()));
+				
+		encode = 0;
+		decode = 0;
 	}
 	
 	/**
