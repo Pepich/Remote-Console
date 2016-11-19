@@ -256,7 +256,7 @@ public class UserManager extends Thread implements Listener
 		Player p = Bukkit.getPlayer(uuid);
 		if (p != null) return p.getDisplayName();
 		
-		return displayNames.get(uuid);
+		return displayNames.get(uuid) != null ? displayNames.get(uuid) : Bukkit.getOfflinePlayer(uuid).getName();
 	}
 	
 	/**
