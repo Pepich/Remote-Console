@@ -126,7 +126,7 @@ public class PasswordAuthentication extends AuthenticationMethod implements Seri
 	@Override
 	public void save()
 	{
-		File saveFile = new File(Main.getDataLocation().getAbsolutePath() + uuid.toString() + "/password-auth.auth");
+		File saveFile = new File(Main.getDataLocation().getAbsolutePath(), uuid.toString() + "/password-auth.auth");
 		try
 		{
 			saveFile.createNewFile();
@@ -149,7 +149,7 @@ public class PasswordAuthentication extends AuthenticationMethod implements Seri
 	 */
 	public static PasswordAuthentication load(UUID uuid)
 	{
-		File saveFile = new File(Main.getDataLocation().getAbsolutePath() + uuid.toString() + "/password-auth.auth");
+		File saveFile = new File(Main.getDataLocation().getAbsolutePath(), uuid.toString() + "/password-auth.auth");
 		if (!saveFile.exists())
 			return new PasswordAuthentication(uuid);
 		else
