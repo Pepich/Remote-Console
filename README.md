@@ -65,7 +65,7 @@ rmc.minpwlength=8<br/>
 \# l/u = requires lowercase/uppercase | n = requires number | s = requires special chars (like !).<br/>
 rmc.pwpattern="lu"<br/>
 \# Time in seconds until the password expires. -1 = never. Allows for use of patterns like 30d5h3s<br/>
-rmc.pwexpire=-1<br/>
+rmc.pwexpire="-1"<br/>
 \# Defines the token length. Will form a pattern of xxxx-xx.<br/>
 rmc.tokenlenght=6<br/>
 \# Defines the token complexity.<br/>
