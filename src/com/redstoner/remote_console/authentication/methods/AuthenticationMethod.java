@@ -13,7 +13,7 @@ public abstract class AuthenticationMethod implements Serializable
 {
 	private static final long serialVersionUID = 3934618157298913318L;
 	
-	protected final transient UUID uuid;
+	protected final UUID uuid;
 	
 	/**
 	 * This method tries to authenticate the user owning this AuthenticationMethod with the given parameters

@@ -65,12 +65,9 @@ public class User extends Thread
 		Main.logger.info("New client connected with IP: " + connection.getInetAddress());
 		this.connection = connection;
 		connection.getOutputStream().flush();
-		Main.logger.info("Flushed output stream");
 		this.objectOut = new ObjectOutputStream(connection.getOutputStream());
 		objectOut.flush();
-		Main.logger.info("Flushed objectOut");
 		this.objectIn = new ObjectInputStream(connection.getInputStream());
-		Main.logger.info("Got input stream");
 	}
 	
 	/**
@@ -89,6 +86,7 @@ public class User extends Thread
 	 */
 	public void load()
 	{
+		Main.logger.info("Loading userdata of uuid " + uuid);
 		this.tokenAuth = TokenAuthentication.load(uuid);
 		this.googleAuth = GoogleAuthentication.load(uuid);
 		this.ingameAuth = IngameAuthentication.load(uuid);
@@ -261,6 +259,8 @@ public class User extends Thread
 					// Check if the user is authorized to view console
 					if (UserManager.mayConnect(uuid))
 					{
+						// After having received the UUID and confirmed that the user is allowed to be authorized, invoke the load() method to load the authorization methods
+						load();
 						Player p = Bukkit.getPlayer(uuid);
 						if (p == null)
 						{
@@ -278,8 +278,6 @@ public class User extends Thread
 							status = 6;
 							break;
 						}
-						// After having received the UUID and confirmed that the user is allowed to be authorized, invoke the load() method to load the authorization methods
-						load();
 					}
 					else
 					{
@@ -300,7 +298,7 @@ public class User extends Thread
 				{
 					objectOut.writeObject(new SealedObject("SRV-REQ-AUT", ciphers.getNextAESEncode()));
 					objectOut.flush();
-					String type = tokenAuth == null ? "PWD" : "TKN";
+					String type = tokenAuth.isEnabled() ? "PWD" : "TKN";
 					objectOut.writeObject(new SealedObject("SRV-REQ-" + type, ciphers.getNextAESEncode()));
 					objectOut.flush();
 					
