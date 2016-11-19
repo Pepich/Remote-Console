@@ -54,6 +54,8 @@ public class User extends Thread
 	
 	private FakePlayer player;
 	
+	private boolean disconnecting = false;
+	
 	/**
 	 * This constructor will create a new blank user that will load the user-data as soon as a username was provided.
 	 * 
@@ -129,7 +131,11 @@ public class User extends Thread
 	 */
 	protected void disconnect(String message)
 	{
-		sendMessage(message);
+		if (!disconnecting)
+		{
+			disconnecting = true;
+			sendMessage(message);
+		}
 		disconnect();
 	}
 	
