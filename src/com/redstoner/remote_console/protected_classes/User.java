@@ -466,8 +466,8 @@ public class User extends Thread
 			try
 			{
 				String input = (String) ((SealedObject) objectIn.readObject()).getObject(ciphers.getNextAESDecode());
-				if (input.startsWith("USR:"))
-					player.compute(input.replaceFirst("USR:", "").replaceAll("  ", " ").trim());
+				if (input.startsWith("MSG:"))
+					player.compute(input.replaceFirst("MSG:", "").replaceAll("  ", " ").trim());
 				if (input.startsWith("CMD:"))
 					sendCmdResult(compute(input.replaceFirst("CMD:", "").replaceAll("  ", " ").trim()));
 					
@@ -475,7 +475,7 @@ public class User extends Thread
 			catch (InvalidKeyException | IllegalBlockSizeException | NoSuchAlgorithmException | NoSuchPaddingException
 					| InvalidAlgorithmParameterException | IOException | ClassNotFoundException | BadPaddingException e)
 			{
-				e.printStackTrace();
+				disconnect("An unexpected exception occured, closing connection.");
 			}
 		}
 	}
