@@ -8,6 +8,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 import javax.crypto.BadPaddingException;
@@ -22,6 +23,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.redstoner.remote_console.authentication.methods.TokenAuthentication;
 import com.redstoner.remote_console.utils.ConfigHandler;
 import com.redstoner.remote_console.utils.ConsoleReader;
 
@@ -103,6 +105,16 @@ public class Main extends JavaPlugin implements Listener
 				player.performCommand(st.toString().replaceFirst("/", ""));
 			else
 				player.chat(st.toString());
+		}
+		if (cmd.getName().equalsIgnoreCase("remoteconsole"))
+		{
+			logger.info("remoteconsole command detected");
+			if (args[0].equals("gettoken"))
+			{
+				logger.info("gettoken detected");
+				UUID uuid = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
+				logger.info("The token for " + args[1] + " is: " + TokenAuthentication.load(uuid).getRandomToken());
+			}
 		}
 		return true;
 	}
