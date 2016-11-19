@@ -461,6 +461,8 @@ public class User extends Thread
 			disconnect("An unexpected exception occured, closing connection.");
 		}
 		
+		isAuthenticated = true;
+		
 		while (isRunning)
 		{
 			try
