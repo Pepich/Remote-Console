@@ -72,7 +72,7 @@ rmc.tokenlenght=6<br/>
 \# 1 = upppercase only, 2 = upper and lowercase, 3 = alphanumeric, 4 = alphanumeric and special chars.<br/>
 rmc.tokencomplexity=3<br/>
 \# he suffix to append to displaynames for chat and commands. Will only apply if the player is not online.<br/>
-rmc.suffix="§7[C]"<br/>
+rmc.suffix="&7[C]"<br/>
 \# Same as suffix, just as a prefix.<br/>
 rmc.prefix=""<br/><br/>
 \# ----- PERMISSIONS -  Please note that these only work when the player is online or PEX is installed.-----<br/><br/>
