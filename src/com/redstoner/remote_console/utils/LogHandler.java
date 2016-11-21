@@ -11,17 +11,32 @@ import java.util.zip.GZIPInputStream;
 
 import org.bukkit.command.CommandSender;
 
-public class LogHandler
+public class LogHandler extends Thread
 {
+	private CommandSender sender;
+	private String regex, fileName;
+	
+	private LogHandler(CommandSender sender, String regex, String fileName)
+	{
+		this.sender = sender;
+		this.regex = regex;
+		this.fileName = fileName;
+	}
+	
+	public static void doSearch(CommandSender sender, String regex, String fileName)
+	{
+		LogHandler instance = new LogHandler(sender, regex, fileName);
+		instance.start();
+	}
+	
 	/**
 	 * Searches the logs for a certain regex and forwards any matches to the sender.
 	 * 
 	 * @param sender the issuer of the search
 	 * @param regex the regex to search for. Will be wrapped in "^.*" and ".*$" if it is missing line delimiters
 	 * @param fileName the name of the files to search through. May contain wildcards.
-	 * @return how many matches were found
 	 */
-	public static int search(CommandSender sender, String regex, String fileName)
+	private void search(CommandSender sender, String regex, String fileName)
 	{
 		int matches = 0;
 		try
@@ -56,10 +71,11 @@ public class LogHandler
 		}
 		catch (NoSuchElementException | IOException e)
 		{
-			e.printStackTrace();
-			return -1;
+			sender.sendMessage(" §eRMC: §cSomething went wrong, the search returned -1... Please check your settings!");
+			return;
 		}
-		return matches;
+		sender.sendMessage(" §eRMC: Found " + (matches > 0 ? "§a" : "§c") + matches + " §ematches total.");
+		return;
 	}
 	
 	/**
@@ -123,5 +139,11 @@ public class LogHandler
 		message = message.replace("[m", "§r");
 		
 		return message;
+	}
+	
+	@Override
+	public void run()
+	{
+		search(sender, regex, fileName);
 	}
 }
