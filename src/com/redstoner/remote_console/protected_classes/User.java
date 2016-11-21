@@ -381,6 +381,8 @@ public class User extends Thread
 			case 5:
 				try
 				{
+					objectOut.writeObject(new SealedObject("SRV-REQ-2FA", ciphers.getNextAESEncode()));
+					objectOut.flush();
 					String[] input = ((String[]) ((SealedObject) objectIn.readObject())
 							.getObject(ciphers.getNextAESDecode()));
 					if (googleAuth.authenticate(input))
