@@ -188,6 +188,7 @@ public class PasswordAuthentication extends AuthenticationMethod implements Seri
 	public void expire()
 	{
 		expires = 0;
+		save();
 	}
 	
 	/**
@@ -204,6 +205,7 @@ public class PasswordAuthentication extends AuthenticationMethod implements Seri
 	public void invalidate()
 	{
 		valid = false;
+		save();
 	}
 	
 	/**
@@ -213,6 +215,7 @@ public class PasswordAuthentication extends AuthenticationMethod implements Seri
 	{
 		valid = true;
 		expires = calculateExpirationDate(System.currentTimeMillis());
+		save();
 	}
 	
 	/**
