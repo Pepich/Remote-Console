@@ -23,6 +23,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.redstoner.remote_console.authentication.methods.GoogleAuthentication;
 import com.redstoner.remote_console.authentication.methods.TokenAuthentication;
 import com.redstoner.remote_console.utils.ConfigHandler;
 import com.redstoner.remote_console.utils.ConsoleReader;
@@ -95,9 +96,10 @@ public class Main extends JavaPlugin implements Listener
 	@Deprecated
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
 	{
-		if (cmd.getName().equalsIgnoreCase("remoteconsole"))
+		try
 		{
-			try
+			if (cmd.getName().equalsIgnoreCase("remoteconsole")
+					&& sender.hasPermission(ConfigHandler.getString("rmc.perm")))
 			{
 				if (args[0].equalsIgnoreCase("gettoken")
 						&& sender.hasPermission(ConfigHandler.getString("rmc.perm.gettoken")))
@@ -115,8 +117,8 @@ public class Main extends JavaPlugin implements Listener
 								"The token for " + args[1] + " is: " + TokenAuthentication.load(uuid).getRandomToken());
 					}
 				}
-				
-				if (args[0].equalsIgnoreCase("list") && sender.hasPermission(ConfigHandler.getString("rmc.perm.list")))
+				else if (args[0].equalsIgnoreCase("list")
+						&& sender.hasPermission(ConfigHandler.getString("rmc.perm.list")))
 				{
 					sender.sendMessage("§e RMC: There is a total of §a" + UserManager.getConnectedUsers().size()
 							+ " §e users connected right now:");
@@ -126,11 +128,159 @@ public class Main extends JavaPlugin implements Listener
 								+ (user.isAuthenticated() ? " §a(" : " §c(Not ") + "Authenticated(");
 					}
 				}
+				else if (args[0].equals("2fa-restore")
+						&& sender.hasPermission(ConfigHandler.getString("rmc.perm.auth")))
+				{
+					UUID uuid = null;
+					if (sender instanceof Player)
+						uuid = ((Player) sender).getUniqueId();
+					else
+						uuid = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
+						
+					GoogleAuthentication gAuth = GoogleAuthentication.load(uuid);
+					if (gAuth.isEnabled())
+					{
+						sender.sendMessage(" §eRMC: &aFound enabled 2FA. Attempting to retrieve restore data...");
+						int keyAmount = gAuth.getRestoreKeys().size();
+						sender.sendMessage(
+								" §eRMC: &eFound " + (keyAmount > 0 ? "§a" : "§c") + keyAmount + " §erestore keys:");
+						if (keyAmount == 0)
+						{
+							sender.sendMessage(" §eRMC: Trying to generate a new restore key...");
+							String key = GoogleAuthentication.getRandomSecretKey();
+							gAuth.getRestoreKeys().add(key);
+							sender.sendMessage(" §eRMC: &a" + key);
+						}
+						else
+						{
+							for (String key : gAuth.getRestoreKeys())
+								sender.sendMessage(" §eRMC: &a" + key);
+						}
+					}
+					else
+					{
+						sender.sendMessage(
+								" §eRMC: &cCould not find any 2FA data for the account. Perhaps 2FA is not enabled?");
+					}
+				}
+				
+				else if (args[0].equals("2fa-secret") && sender.hasPermission(ConfigHandler.getString("rmc.perm.auth")))
+				{
+					UUID uuid = null;
+					if (sender instanceof Player)
+						uuid = ((Player) sender).getUniqueId();
+					else
+						uuid = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
+						
+					GoogleAuthentication gAuth = GoogleAuthentication.load(uuid);
+					if (gAuth.isEnabled())
+					{
+						sender.sendMessage(" §eRMC: &aFound enabled 2FA. Attempting to retrieve restore data...");
+						String key = gAuth.getSecretKey();
+						if (key == null)
+						{
+							sender.sendMessage(" §eRMC: &cCouldn't find any secret key.");
+							sender.sendMessage(" §eRMC: Trying to generate a new secret key...");
+							gAuth.enable();
+							key = gAuth.getSecretKey();
+							sender.sendMessage(" §eRMC: The new secret key is: &a" + key);
+							sender.sendMessage(" §eRMC: We also generated a new set of restore keys:");
+							
+							for (String key2 : gAuth.getRestoreKeys())
+								sender.sendMessage(" §eRMC: &a" + key2);
+						}
+						else
+						{
+							sender.sendMessage(" §eRMC: §aFound a secret key: " + key);
+						}
+					}
+					else
+					{
+						sender.sendMessage(
+								" §eRMC: &cCould not find any 2FA data for the account. Perhaps 2FA is not enabled?");
+					}
+				}
+				
+				else if (args[0].equalsIgnoreCase("2fa"))
+				{
+					if (args[1].equalsIgnoreCase("enable"))
+					{
+						UUID uuid = null;
+						if (sender instanceof Player)
+							uuid = ((Player) sender).getUniqueId();
+						else
+							uuid = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
+							
+						GoogleAuthentication gAuth = GoogleAuthentication.load(uuid);
+						
+						if (!gAuth.isEnabled())
+						{
+							if (gAuth.enable())
+							{
+								sender.sendMessage(" §eRMC: Generating a new secret key...");
+								gAuth.enable();
+								String key = gAuth.getSecretKey();
+								sender.sendMessage(" §eRMC: The new secret key is: &a" + key);
+								sender.sendMessage(" §eRMC: We also generated a new set of restore keys:");
+								
+								for (String key2 : gAuth.getRestoreKeys())
+									sender.sendMessage(" §eRMC: &a" + key2);
+							}
+							else
+							{
+								sender.sendMessage(
+										" §eRMC: &aPrevious settings were restored, your old keys are still valid.");
+							}
+							sender.sendMessage(" §eRMC: 2FA §aenabled.");
+						}
+						else
+						{
+							sender.sendMessage(" §eRMC: &c2FA was already enabled!");
+						}
+					}
+					else if (args[1].equalsIgnoreCase("disable"))
+					{
+						UUID uuid = null;
+						if (sender instanceof Player)
+							uuid = ((Player) sender).getUniqueId();
+						else
+							uuid = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
+							
+						GoogleAuthentication gAuth = GoogleAuthentication.load(uuid);
+						
+						if (gAuth.isEnabled())
+						{
+							if (args.length == 3)
+							{
+								boolean clear = ConfigHandler.toBoolean(args[2]);
+								if (clear)
+								{
+									sender.sendMessage(
+											" §eRMC: &cClearing settings, a new key will be generated when you enable 2AF again.");
+								}
+								else
+								{
+									sender.sendMessage(
+											" §eRMC: &cNot clearing settings, your keys will still be valid when you enable 2AF again.");
+								}
+								sender.sendMessage(" §eRMC: 2FA §cdisabled.");
+							}
+							else
+							{
+								gAuth.disable(false);
+							}
+						}
+						else
+						{
+							sender.sendMessage(" §eRMC: &c2FA was already disabled!");
+						}
+					}
+				}
 			}
-			catch (InvalidObjectException | NoSuchElementException e)
-			{
-				sender.sendMessage("§cSomething went wrong: " + e.getMessage());
-			}
+		}
+		catch (InvalidObjectException | NoSuchElementException e)
+		{
+			sender.sendMessage("§cSomething went wrong: " + e.getMessage());
 		}
 		return true;
 	}
