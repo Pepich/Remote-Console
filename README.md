@@ -15,7 +15,7 @@ LAUNCH PARAMETERS WILL ALWAYS OVERRIDE YOUR CONFIG! If something doesn't work as
 \# Default data folder<br/>
 rmc.datafolder="plugins/remoteconsole/"<br/>
 \# Path to the server logfiles. Will be used for searching the logs.<br/>
-rmc.log.path="logs/"<br/>
+rmc.logs.path="logs/"<br/>
 \# Will only allow connections from LAN IP ranges (192.168.x.x, 10.x.x.x, 127.x.x.x)<br/>
 rmc.LANOnly=false<br/>
 \# Will only allow connections from VM IP ranges (10.x.x.x, 127.x.x.x)<br/>
