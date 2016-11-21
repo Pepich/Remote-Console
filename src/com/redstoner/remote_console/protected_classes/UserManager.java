@@ -56,7 +56,7 @@ public class UserManager extends Thread implements Listener
 		}
 		catch (Exception e)
 		{
-		
+			e.printStackTrace();
 		}
 		
 		Bukkit.getPluginManager().registerEvents(this, Main.getPlugin());
@@ -72,16 +72,18 @@ public class UserManager extends Thread implements Listener
 	@SuppressWarnings("unchecked")
 	private static void loadDisplayNames() throws FileNotFoundException, IOException, ClassNotFoundException
 	{
-		if (displayNames != null) return;
 		File displayNameFile = new File(Main.getDataLocation(), "displayNames.hmap");
 		if (!displayNameFile.exists())
 		{
 			displayNames = new HashMap<UUID, String>();
 			return;
 		}
-		ObjectInputStream input = new ObjectInputStream(new FileInputStream(displayNameFile));
-		displayNames = (HashMap<UUID, String>) input.readObject();
-		input.close();
+		else
+		{
+			ObjectInputStream input = new ObjectInputStream(new FileInputStream(displayNameFile));
+			displayNames = (HashMap<UUID, String>) input.readObject();
+			input.close();
+		}
 	}
 	
 	/**
