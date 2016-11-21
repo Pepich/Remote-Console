@@ -401,6 +401,8 @@ public class User extends Thread
 			case 14:
 				try
 				{
+					objectOut.writeObject(new SealedObject("SRV-REQ-AUT", ciphers.getNextAESEncode()));
+					objectOut.flush();
 					objectOut.writeObject(new SealedObject("SRV-REQ-IGA", ciphers.getNextAESEncode()));
 					objectOut.flush();
 					
