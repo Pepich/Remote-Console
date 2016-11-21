@@ -296,7 +296,7 @@ public class Main extends JavaPlugin implements Listener
 				{
 					if (!(sender instanceof Player))
 					{
-						sender.sendMessage(" §4DO NOT EVER RUN THIS FROM CONSOLE!");
+						sender.sendMessage("§4DO NOT EVER RUN THIS FROM CONSOLE!");
 						return true;
 					}
 					StringBuilder regexBuilder = new StringBuilder();
