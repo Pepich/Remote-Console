@@ -41,7 +41,7 @@ public class GoogleAuthentication extends AuthenticationMethod implements Serial
 	{
 		if (args.length == 0)
 			return false;
-		else if (args[0].equals(TOTP.getTOTPCode(secretKey)))
+		else if (args[0].replaceAll(" ", "").equals(TOTP.getTOTPCode(secretKey)))
 			return true;
 		else if (restoreKeys.remove(args[0]))
 			return true;
