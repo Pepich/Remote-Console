@@ -27,6 +27,7 @@ import com.redstoner.remote_console.authentication.methods.GoogleAuthentication;
 import com.redstoner.remote_console.authentication.methods.TokenAuthentication;
 import com.redstoner.remote_console.utils.ConfigHandler;
 import com.redstoner.remote_console.utils.ConsoleReader;
+import com.redstoner.remote_console.utils.LogHandler;
 
 /**
  * This class contains the test-mode entry point as well as the javaPlugin onEnable/onDisable methods
@@ -275,6 +276,15 @@ public class Main extends JavaPlugin implements Listener
 							sender.sendMessage(" §eRMC: &c2FA was already disabled!");
 						}
 					}
+				}
+				else if (args[0].equalsIgnoreCase("search")
+						&& sender.hasPermission(ConfigHandler.getString("rmc.perm.logs.search")))
+				{
+					StringBuilder regexBuilder = new StringBuilder();
+					for (int i = 2; i < args.length; i++)
+						regexBuilder.append(args[i]);
+					int result = LogHandler.search(sender, regexBuilder.toString(), args[1]);
+					sender.sendMessage(" §eRMC: Found " + (result > 0 ? "§a" : "§c") + result + " matches total.");
 				}
 			}
 		}
