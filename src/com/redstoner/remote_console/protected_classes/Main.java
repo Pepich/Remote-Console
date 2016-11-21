@@ -112,8 +112,17 @@ public class Main extends JavaPlugin implements Listener
 			if (args[0].equals("gettoken"))
 			{
 				logger.info("gettoken detected");
-				UUID uuid = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
-				logger.info("The token for " + args[1] + " is: " + TokenAuthentication.load(uuid).getRandomToken());
+				UUID uuid = null;
+				if (sender instanceof Player)
+				{
+					uuid = ((Player) sender).getUniqueId();
+					logger.info("The token for you is: " + TokenAuthentication.load(uuid).getRandomToken());
+				}
+				else
+				{
+					uuid = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
+					logger.info("The token for " + args[1] + " is: " + TokenAuthentication.load(uuid).getRandomToken());
+				}
 			}
 		}
 		return true;
