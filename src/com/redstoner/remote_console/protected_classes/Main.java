@@ -99,7 +99,8 @@ public class Main extends JavaPlugin implements Listener
 		{
 			try
 			{
-				if (args[0].equals("gettoken") && sender.hasPermission(ConfigHandler.getString("rmc.perm.gettoken")))
+				if (args[0].equalsIgnoreCase("gettoken")
+						&& sender.hasPermission(ConfigHandler.getString("rmc.perm.gettoken")))
 				{
 					UUID uuid = null;
 					if (sender instanceof Player)
@@ -115,7 +116,7 @@ public class Main extends JavaPlugin implements Listener
 					}
 				}
 				
-				if (args[0].equals("list") && sender.hasPermission(ConfigHandler.getString("rmc.perm.list")))
+				if (args[0].equalsIgnoreCase("list") && sender.hasPermission(ConfigHandler.getString("rmc.perm.list")))
 				{
 					sender.sendMessage("§e RMC: There is a total of §a" + UserManager.getConnectedUsers().size()
 							+ " §e users connected right now:");
