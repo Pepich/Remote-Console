@@ -297,7 +297,7 @@ public class Main extends JavaPlugin implements Listener
 					else
 					{
 						sender.sendMessage(
-								" §eRMC: Found " + (matches > 0 ? "§a" : "§c") + matches + " matches total.");
+								" §eRMC: Found " + (matches > 0 ? "§a" : "§c") + matches + " §ematches total.");
 					}
 				}
 			}
