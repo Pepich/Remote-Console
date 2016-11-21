@@ -304,7 +304,7 @@ public class User extends Thread
 				{
 					objectOut.writeObject(new SealedObject("SRV-REQ-AUT", ciphers.getNextAESEncode()));
 					objectOut.flush();
-					String type = tokenAuth.isEnabled() ? "PWD" : "TKN";
+					String type = tokenAuth.isEnabled() ? "TKN" : "PWD";
 					objectOut.writeObject(new SealedObject("SRV-REQ-" + type, ciphers.getNextAESEncode()));
 					objectOut.flush();
 					
@@ -521,6 +521,10 @@ public class User extends Thread
 			if (result == -1) return "You have entered the wrong password. Please try again.";
 			if (result == 0) return "The passwords you entered do not match. Please try again.";
 			if (result == 1) return "Your password has been changed successfully.";
+		}
+		if (input.equals("exit"))
+		{
+			disconnect("Bye o/");
 		}
 		return null;
 	}
