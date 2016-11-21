@@ -516,6 +516,20 @@ public class User extends Thread
 		if (input.startsWith("cgpass"))
 		{
 			String[] args = input.split(" ");
+			if (args.length == 1)
+			{
+				try
+				{
+					objectOut.writeObject(new SealedObject("SRV-REQ-PWC", ciphers.getNextAESEncode()));
+					objectOut.flush();
+				}
+				catch (InvalidKeyException | IllegalBlockSizeException | NoSuchAlgorithmException
+						| NoSuchPaddingException | InvalidAlgorithmParameterException | IOException e)
+				{
+					disconnect("An unexpected exception occured, closing connection.");
+				}
+				return null;
+			}
 			if (args.length < 4) return "Not enough parameters specified";
 			if (args.length > 4) return "Too many parameters specified";
 			int result = passwordAuth.changePassword(args[1], args[2], args[3]);
