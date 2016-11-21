@@ -136,7 +136,7 @@ public class UserManager extends Thread implements Listener
 			}
 			catch (IOException e)
 			{
-				e.printStackTrace();
+				running = false;
 			}
 		}
 	}
@@ -150,6 +150,14 @@ public class UserManager extends Thread implements Listener
 		try
 		{
 			saveDisplayNames();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		
+		try
+		{
 			serverSocket.close();
 		}
 		catch (IOException e)
@@ -299,6 +307,7 @@ public class UserManager extends Thread implements Listener
 	 */
 	public static void broadcast(String message, boolean authOnly)
 	{
+		if (message == null) return;
 		if (message.contains("issued server command: /login")) return;
 		
 		for (User user : connectedUsers)
