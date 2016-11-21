@@ -2,17 +2,14 @@ package com.redstoner.remote_console.utils;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Enumeration;
 import java.util.NoSuchElementException;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.zip.GZIPInputStream;
 
 import org.bukkit.command.CommandSender;
-
-import com.redstoner.remote_console.protected_classes.Main;
 
 public class LogHandler
 {
@@ -34,25 +31,18 @@ public class LogHandler
 			boolean singleFile = true;
 			if (fileName.contains("*")) singleFile = false;
 			File logFolder = ConfigHandler.getFile("rmc.logs.path");
+			fileName = fileName.replace("*", ".*");
 			for (File file : logFolder.listFiles())
 			{
-				if (file.getName().matches(fileName.replaceAll("\\*", ".*")))
+				if (file.getName().matches(fileName))
 				{
-					Main.logger.info("Found matching file: " + fileName);
 					if (file.getName().endsWith(".gz"))
 					{
-						ZipFile zip = new ZipFile(file);
-						Enumeration<? extends ZipEntry> zipEntries = zip.entries();
-						while (zipEntries.hasMoreElements())
-						{
-							ZipEntry entry = zipEntries.nextElement();
-							if (entry.isDirectory()) continue;
-							BufferedReader inputReader = new BufferedReader(
-									new InputStreamReader(zip.getInputStream(entry)));
-							matches += searchStream(inputReader, regex, sender, singleFile, zip.getName());
-							inputReader.close();
-						}
-						zip.close();
+						
+						BufferedReader inputReader = new BufferedReader(
+								new InputStreamReader(new GZIPInputStream(new FileInputStream(file))));
+						matches += searchStream(inputReader, regex, sender, singleFile, file.getName());
+						inputReader.close();
 					}
 					else
 					{
@@ -66,6 +56,7 @@ public class LogHandler
 		}
 		catch (NoSuchElementException | IOException e)
 		{
+			e.printStackTrace();
 			return -1;
 		}
 		return matches;
