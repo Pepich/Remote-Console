@@ -25,17 +25,14 @@ import com.redstoner.remote_console.utils.TOTP;
 public class GoogleAuthentication extends AuthenticationMethod implements Serializable
 {
 	private static final long serialVersionUID = 5531038871418983654L;
-	private String secretKey;
+	private String secretKey = null;
 	private ArrayList<String> restoreKeys;
 	private boolean enabled = false;
 	
 	private GoogleAuthentication(UUID uuid)
 	{
 		super(uuid);
-		secretKey = getRandomSecretKey();
 		restoreKeys = new ArrayList<String>();
-		for (int i = 0; i < 8; i++)
-			restoreKeys.add(getRandomSecretKey());
 		enabled = false;
 	}
 	
