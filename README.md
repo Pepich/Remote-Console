@@ -42,7 +42,7 @@ rmc.port=9000<br/>
 \# Enables authentication through an ingame command when the user is online.<br/>
 rmc.allowignauth=true<br/>
 \# Compare the IPs and only allow ingame authentication if the IPs of the online user and the rmc user match.<br/>
-rnc.ignauth.checkIP=true<br/>
+rmc.ignauth.checkIP=true<br/>
 \# Enables token authentication (tokens are invalidated after first use).<br/>
 rmc.allowtoken=true<br/>
 \# Enables google 2FA.<br/>
