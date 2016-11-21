@@ -125,8 +125,10 @@ public class GoogleAuthentication extends AuthenticationMethod implements Serial
 			restoreKeys = new ArrayList<String>();
 			for (int i = 0; i < 8; i++)
 				restoreKeys.add(getRandomSecretKey());
+			save();
 			return true;
 		}
+		save();
 		return false;
 	}
 	
@@ -143,6 +145,7 @@ public class GoogleAuthentication extends AuthenticationMethod implements Serial
 			restoreKeys = null;
 		}
 		enabled = false;
+		save();
 	}
 	
 	/**
