@@ -156,9 +156,10 @@ public class PasswordAuthentication extends AuthenticationMethod implements Seri
 		{
 			try
 			{
-				ObjectInputStream saveStream = new ObjectInputStream(new FileInputStream(saveFile));
-				PasswordAuthentication returnAuth = (PasswordAuthentication) saveStream.readObject();
-				saveStream.close();
+				ObjectInputStream loadStream = new ObjectInputStream(new FileInputStream(saveFile));
+				PasswordAuthentication returnAuth = (PasswordAuthentication) loadStream.readObject();
+				loadStream.close();
+				returnAuth.salt = uuid.toString().getBytes();
 				return returnAuth;
 			}
 			catch (IOException | ClassNotFoundException e)
