@@ -14,17 +14,11 @@ LAUNCH PARAMETERS WILL ALWAYS OVERRIDE YOUR CONFIG! If something doesn't work as
 # DEFAULT CONFIG - The config will be located at plugins/rmc-config.properties
 \# Default data folder<br/>
 rmc.datafolder="plugins/remoteconsole/"<br/>
-\# Enable logging<br/>
-rmc.log=true<br/>
-\# Path to the logfile. Path to the datafolder will be put in front<br/>
-rmc.log.path="latest.log"<br/>
-\# Allows users to read console without authentication. Sending messages will still require authentication. HANDLE WITH CARE!<br/>
-rmc.noAuth=false<br/>
-\# Enables permission respecting commands. If set to false, users can run anything with elevated permissions. HANDLE WITH CARE!<br/>
-rmc.respectPerms=true<br/>
-\# Will only allow connections from LAN IP ranges (192.168.x.x, 10.x.x.x, 127.0.0.1)<br/>
+\# Path to the server logfiles. Will be used for searching the logs.<br/>
+rmc.log.path="logs/"<br/>
+\# Will only allow connections from LAN IP ranges (192.168.x.x, 10.x.x.x, 127.x.x.x)<br/>
 rmc.LANOnly=false<br/>
-\# Will only allow connections from VM IP ranges (10.x.x.x, 127.0.0.1)<br/>
+\# Will only allow connections from VM IP ranges (10.x.x.x, 127.x.x.x)<br/>
 rmc.VMOnly=false<br/>
 \# Will only allow connections from local IPs (127.x.x.x) - These ones are overriding bottom to top. If localOnly is set, it will override the other two settings.<br/>
 rmc.localOnly=false<br/>
@@ -51,21 +45,10 @@ rmc.allowignauth=true<br/>
 rnc.ignauth.checkIP=true<br/>
 \# Enables token authentication (tokens are invalidated after first use).<br/>
 rmc.allowtoken=true<br/>
-\# Enables password authentication.<br/>
-rmc.allowpw=true<br/>
 \# Enables google 2FA.<br/>
 rmc.allow2fa=true<br/>
 \# Not implemented yet. Will allow the use of private/public keypairs for authentication.<br/>
 rmc.allowkey=true<br/>
-\# Force users to use g-auth 2FA.<br/>
-rmc.force2FA=false<br/>
-\# Specifies the minimum required password length.<br/>
-rmc.minpwlength=8<br/>
-\# Specifies a passwort pattern/requirement. If added, at least one of that type of char is required.
-\# l/u = requires lowercase/uppercase | n = requires number | s = requires special chars (like !).<br/>
-rmc.pwpattern="lu"<br/>
-\# Time in seconds until the password expires. -1 = never. Allows for use of patterns like 30d5h3s<br/>
-rmc.pwexpire="-1"<br/>
 \# Defines the token length. Will form a pattern of xxxx-xx.<br/>
 rmc.tokenlenght=6<br/>
 \# Defines the token complexity.<br/>
@@ -75,21 +58,13 @@ rmc.tokencomplexity=3<br/>
 rmc.suffix="&7[C]"<br/>
 \# Same as suffix, just as a prefix.<br/>
 rmc.prefix=""<br/><br/>
-\# ----- PERMISSIONS -  Please note that these only work when the player is online or PEX is installed.-----<br/><br/>
-\# Required permission to do anything - NOT GRANTED BY WILDCARDS!<br/>
+\# ----- PERMISSIONS -----<br/><br/>
+\# Required permission to do anything<br/>
 rmc.perm="rmc"<br/>
 \# Node to connect to the server<br/>
 rmc.perm.connect="rmc.connect"<br/>
 \# Node to log in - please note that people with the connect permission can still receive broadcasts that don't require a login<br/>
 rmc.perm.auth="rmc.auth"<br/>
-\# Node to read the console output<br/>
-rmc.perm.read="rmc.read"<br/>
-\# Node to send any data<br/>
-rmc.perm.write="rmc.write"<br/>
-\# Node to send chat messages<br/>
-rmc.perm.write.chat="rmc.write.chat"<br/>
-\# Node to run commands<br/>
-rmc.perm.write.cmd="rmc.write.cmd"<br/>
 \# Node to generate a one-time token ingame<br/>
 rmc.perm.gettoken="rmc.gettoken"<br/>
 \# Node to list all connected users<br/>
@@ -99,19 +74,13 @@ rmc.perm.list="rmc.list"<br/>
 
 # FURTHER INFO:
 
-- Requires PEX if respectPerms is set to true
+- Requires PEX
 - Requires an open port to bind to
 - Requires rw access to \<datafolder\>*
 
 # WIP SECTION:
 
 - Accepting launch parameters
-- Debug output
 - IP whitelisting
-- Password patterns/expiration
-- PEX-less integration when not respecting permissions
 - Private/public key authentication
-- Partially: permission checking
-- Ingame commands:
-  - list
 - SQL support
