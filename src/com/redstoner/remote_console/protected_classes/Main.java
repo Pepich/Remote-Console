@@ -256,7 +256,13 @@ public class Main extends JavaPlugin implements Listener
 						{
 							if (args.length == 3)
 							{
-								boolean clear = ConfigHandler.toBoolean(args[2]);
+								boolean clear = false;
+								try
+								{
+									clear = ConfigHandler.toBoolean(args[2]);
+								}
+								catch (InvalidObjectException e)
+								{}
 								if (clear)
 								{
 									sender.sendMessage(
@@ -268,6 +274,7 @@ public class Main extends JavaPlugin implements Listener
 											" §eRMC: §cNot clearing settings, your keys will still be valid when you enable 2AF again.");
 								}
 								sender.sendMessage(" §eRMC: 2FA §cdisabled.");
+								gAuth.disable(clear);
 							}
 							else
 							{
