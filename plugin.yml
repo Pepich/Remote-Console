@@ -10,6 +10,3 @@ commands:
   remoteconsole:
     aliases: ["rmconsole", "rmcon", "console"]
     usage: Something went really wrong. This has been reported to an admin.
-  test:
-    usage: /<command> <username> <command>
-    description: Will run a command as an offline or online player

@@ -95,34 +95,40 @@ public class Main extends JavaPlugin implements Listener
 	@Deprecated
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
 	{
-		if (cmd.getName().equalsIgnoreCase("test"))
-		{
-			Player player = UserManager.getPlayer(Bukkit.getOfflinePlayer(args[0]).getUniqueId());
-			StringBuilder st = new StringBuilder();
-			for (int i = 1; i < args.length; i++)
-				st.append(args[i] + " ");
-			if (st.toString().startsWith("/"))
-				player.performCommand(st.toString().replaceFirst("/", ""));
-			else
-				player.chat(st.toString());
-		}
 		if (cmd.getName().equalsIgnoreCase("remoteconsole"))
 		{
-			logger.info("remoteconsole command detected");
-			if (args[0].equals("gettoken"))
+			try
 			{
-				logger.info("gettoken detected");
-				UUID uuid = null;
-				if (sender instanceof Player)
+				if (args[0].equals("gettoken") && sender.hasPermission(ConfigHandler.getString("rmc.perm.gettoken")))
 				{
-					uuid = ((Player) sender).getUniqueId();
-					logger.info("The token for you is: " + TokenAuthentication.load(uuid).getRandomToken());
+					UUID uuid = null;
+					if (sender instanceof Player)
+					{
+						uuid = ((Player) sender).getUniqueId();
+						logger.info("The token for you is: " + TokenAuthentication.load(uuid).getRandomToken());
+					}
+					else
+					{
+						uuid = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
+						logger.info(
+								"The token for " + args[1] + " is: " + TokenAuthentication.load(uuid).getRandomToken());
+					}
 				}
-				else
+				
+				if (args[0].equals("list") && sender.hasPermission(ConfigHandler.getString("rmc.perm.list")))
 				{
-					uuid = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
-					logger.info("The token for " + args[1] + " is: " + TokenAuthentication.load(uuid).getRandomToken());
+					sender.sendMessage("§e RMC: There is a total of §a" + UserManager.getConnectedUsers().size()
+							+ " §e users connected right now:");
+					for (User user : UserManager.getConnectedUsers())
+					{
+						sender.sendMessage("§e " + Bukkit.getOfflinePlayer(user.getUUID()).getName()
+								+ (user.isAuthenticated() ? " §a(" : " §c(Not ") + "Authenticated(");
+					}
 				}
+			}
+			catch (InvalidObjectException | NoSuchElementException e)
+			{
+				sender.sendMessage("§cSomething went wrong: " + e.getMessage());
 			}
 		}
 		return true;
