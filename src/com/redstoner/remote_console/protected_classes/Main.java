@@ -260,12 +260,12 @@ public class Main extends JavaPlugin implements Listener
 								if (clear)
 								{
 									sender.sendMessage(
-											" §eRMC: &cClearing settings, a new key will be generated when you enable 2AF again.");
+											" §eRMC: §cClearing settings, a new key will be generated when you enable 2AF again.");
 								}
 								else
 								{
 									sender.sendMessage(
-											" §eRMC: &cNot clearing settings, your keys will still be valid when you enable 2AF again.");
+											" §eRMC: §cNot clearing settings, your keys will still be valid when you enable 2AF again.");
 								}
 								sender.sendMessage(" §eRMC: 2FA §cdisabled.");
 							}
@@ -276,7 +276,7 @@ public class Main extends JavaPlugin implements Listener
 						}
 						else
 						{
-							sender.sendMessage(" §eRMC: &c2FA was already disabled!");
+							sender.sendMessage(" §eRMC: §c2FA was already disabled!");
 						}
 					}
 				}
