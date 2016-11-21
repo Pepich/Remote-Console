@@ -149,13 +149,11 @@ public class ConfigHandler
 	{
 		if (properties.getProperty(path) == null) throw new NoSuchElementException("Could not find object at " + path);
 		String raw = properties.getProperty(path);
-		if (raw.equalsIgnoreCase("true") || raw.equalsIgnoreCase("t") || raw.equalsIgnoreCase("yes")
-				|| raw.equalsIgnoreCase("y") || raw.equals("1") || raw.equals("+"))
-			return true;
-		if (raw.equalsIgnoreCase("false") || raw.equalsIgnoreCase("f") || raw.equalsIgnoreCase("no")
-				|| raw.equalsIgnoreCase("n") || raw.equals("0") || raw.equals("-"))
-			return false;
-		else
+		try
+		{
+			return toBoolean(raw);
+		}
+		catch (InvalidObjectException e)
 		{
 			if (repairOTG)
 			{
@@ -355,6 +353,18 @@ public class ConfigHandler
 		File f = new File(location);
 		if (checkIfExists && !f.exists()) throw new NoSuchFileException("Could not find file at " + location + ".");
 		return f;
+	}
+	
+	public static boolean toBoolean(String raw) throws InvalidObjectException
+	{
+		if (raw.equalsIgnoreCase("true") || raw.equalsIgnoreCase("t") || raw.equalsIgnoreCase("yes")
+				|| raw.equalsIgnoreCase("y") || raw.equals("1") || raw.equals("+"))
+			return true;
+		if (raw.equalsIgnoreCase("false") || raw.equalsIgnoreCase("f") || raw.equalsIgnoreCase("no")
+				|| raw.equalsIgnoreCase("n") || raw.equals("0") || raw.equals("-"))
+			return false;
+		else
+			throw new InvalidObjectException("The given String could not be converted into a boolean.");
 	}
 	
 }
