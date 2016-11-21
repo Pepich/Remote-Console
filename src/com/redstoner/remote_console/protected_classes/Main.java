@@ -144,7 +144,8 @@ public class Main extends JavaPlugin implements Listener
 					GoogleAuthentication gAuth = GoogleAuthentication.load(uuid);
 					if (gAuth.isEnabled())
 					{
-						sender.sendMessage(" §eRMC: &aFound enabled 2FA. Attempting to retrieve restore data...");
+						sender.sendMessage(" §eRMC: §aFound enabled 2FA. Attempting to retrieve restore data...");
+						sender.sendMessage(" §eRMC: Found 2FA secret key: §a" + gAuth.getSecretKey());
 						int keyAmount = gAuth.getRestoreKeys().size();
 						sender.sendMessage(
 								" §eRMC: &eFound " + (keyAmount > 0 ? "§a" : "§c") + keyAmount + " §erestore keys:");
