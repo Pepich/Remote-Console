@@ -552,6 +552,7 @@ public class User extends Thread
 	 */
 	private void sendCmdResult(String message)
 	{
+		if (message == null) return;
 		try
 		{
 			objectOut.writeObject(new SealedObject("CMD: " + message, ciphers.getNextAESEncode()));
