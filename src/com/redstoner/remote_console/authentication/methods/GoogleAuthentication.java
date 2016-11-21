@@ -52,7 +52,7 @@ public class GoogleAuthentication extends AuthenticationMethod implements Serial
 	@Override
 	public void save()
 	{
-		File saveFile = new File(Main.getDataLocation().getAbsolutePath() + uuid.toString() + "/google-auth.auth");
+		File saveFile = new File(Main.getDataLocation(), uuid.toString() + "/google-auth.auth");
 		try
 		{
 			saveFile.createNewFile();
@@ -69,7 +69,7 @@ public class GoogleAuthentication extends AuthenticationMethod implements Serial
 	
 	public static GoogleAuthentication load(UUID uuid)
 	{
-		File saveFile = new File(Main.getDataLocation().getAbsolutePath() + uuid.toString() + "/google-auth.auth");
+		File saveFile = new File(Main.getDataLocation(), uuid.toString() + "/google-auth.auth");
 		if (!saveFile.exists())
 			return new GoogleAuthentication(uuid);
 		else
