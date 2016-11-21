@@ -23,6 +23,7 @@ import com.redstoner.remote_console.authentication.methods.GoogleAuthentication;
 import com.redstoner.remote_console.authentication.methods.IngameAuthentication;
 import com.redstoner.remote_console.authentication.methods.PasswordAuthentication;
 import com.redstoner.remote_console.authentication.methods.TokenAuthentication;
+import com.redstoner.remote_console.utils.ConfigHandler;
 
 /**
  * This class represents a user in the remote console environment
@@ -273,10 +274,15 @@ public class User extends Thread
 							status++;
 							break;
 						}
-						//if (p.getAddress().getHostString().toString().equals(connection.getInetAddress().toString()))
-						status = 14;
-						//else
-						//	status++;
+						if (ConfigHandler.getBoolean("rmc.ignauth.checkIP"))
+							if (p.getAddress().getHostString().toString()
+									.equals(connection.getInetAddress().toString()))
+								status = 14;
+							else
+								status++;
+						else
+							status = 14;
+							
 						if (!UserManager.mayAuthorize(uuid))
 						{
 							objectOut.writeObject(new SealedObject("USR-NO-AUT", ciphers.getNextAESEncode()));
