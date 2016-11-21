@@ -16,6 +16,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -122,11 +123,13 @@ public class Main extends JavaPlugin implements Listener
 						&& sender.hasPermission(ConfigHandler.getString("rmc.perm.list")))
 				{
 					sender.sendMessage("§e RMC: There is a total of §a" + UserManager.getConnectedUsers().size()
-							+ " §e users connected right now:");
+							+ " §eusers connected right now:");
 					for (User user : UserManager.getConnectedUsers())
 					{
-						sender.sendMessage("§e " + Bukkit.getOfflinePlayer(user.getUUID()).getName()
-								+ (user.isAuthenticated() ? " §a(" : " §c(Not ") + "Authenticated(");
+						OfflinePlayer player = Bukkit.getOfflinePlayer(user.getUUID());
+						sender.sendMessage(
+								"§e " + (player == null ? "UUID: " + user.getUUID() : "Name: " + player.getName())
+										+ (user.isAuthenticated() ? " §a(" : " §c(Not ") + "Authenticated)");
 					}
 				}
 				else if (args[0].equals("2fa-restore")
