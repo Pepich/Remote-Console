@@ -77,9 +77,10 @@ public class User extends Thread
 	 */
 	public void save()
 	{
-		tokenAuth.save();
-		googleAuth.save();
-		passwordAuth.save();
+		if (tokenAuth != null) tokenAuth.save();
+		if (googleAuth != null) googleAuth.save();
+		if (ingameAuth != null) ingameAuth.save();
+		if (passwordAuth != null) passwordAuth.save();
 	}
 	
 	/**
@@ -312,7 +313,7 @@ public class User extends Thread
 							
 					boolean auth = false;
 					
-					if (tokenAuth != null)
+					if (type.equals("TKN"))
 					{
 						if (tokenAuth.authenticate(new String[] { input }))
 						{
@@ -545,7 +546,6 @@ public class User extends Thread
 		catch (InvalidKeyException | IllegalBlockSizeException | NoSuchAlgorithmException | NoSuchPaddingException
 				| InvalidAlgorithmParameterException | IOException e)
 		{
-			e.printStackTrace();
 			disconnect("An unexpected exception occured, closing connection.");
 		}
 	}
@@ -567,7 +567,6 @@ public class User extends Thread
 			}
 			catch (IOException e)
 			{
-				e.printStackTrace();
 				disconnect("An unexpected exception occured, closing connection.");
 			}
 		}
@@ -581,7 +580,6 @@ public class User extends Thread
 			catch (InvalidKeyException | IllegalBlockSizeException | NoSuchAlgorithmException | NoSuchPaddingException
 					| InvalidAlgorithmParameterException | IOException e)
 			{
-				e.printStackTrace();
 				disconnect("An unexpected exception occured, closing connection.");
 			}
 		}
