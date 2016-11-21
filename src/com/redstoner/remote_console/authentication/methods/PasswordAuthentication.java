@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -31,7 +32,7 @@ public class PasswordAuthentication extends AuthenticationMethod implements Seri
 	private static final long serialVersionUID = -7251017035793213272L;
 	
 	private byte[] hashedPassword;
-	private transient byte[] salt;
+	private byte[] salt;
 	
 	private long expires;
 	private boolean valid;
@@ -56,7 +57,7 @@ public class PasswordAuthentication extends AuthenticationMethod implements Seri
 		{
 			if (newPassword.equals(newPasswordConfirmed))
 			{
-				if (hash(oldPassword, salt) == hashedPassword)
+				if (hash(oldPassword, salt).equals(hashedPassword))
 				{
 					hashedPassword = hash(newPassword, salt);
 					revalidate();
@@ -110,7 +111,7 @@ public class PasswordAuthentication extends AuthenticationMethod implements Seri
 		{
 			try
 			{
-				if (hash(args[0], salt) == hashedPassword)
+				if (Arrays.toString(hash(args[0], salt)).equals(Arrays.toString(hashedPassword)))
 					return true;
 				else
 					return false;
@@ -129,6 +130,7 @@ public class PasswordAuthentication extends AuthenticationMethod implements Seri
 		File saveFile = new File(Main.getDataLocation().getAbsolutePath(), uuid.toString() + "/password-auth.auth");
 		try
 		{
+			if (saveFile.exists()) saveFile.delete();
 			saveFile.createNewFile();
 			ObjectOutputStream saveStream = new ObjectOutputStream(new FileOutputStream(saveFile));
 			saveStream.writeObject(this);
@@ -159,7 +161,6 @@ public class PasswordAuthentication extends AuthenticationMethod implements Seri
 				ObjectInputStream loadStream = new ObjectInputStream(new FileInputStream(saveFile));
 				PasswordAuthentication returnAuth = (PasswordAuthentication) loadStream.readObject();
 				loadStream.close();
-				returnAuth.salt = uuid.toString().getBytes();
 				return returnAuth;
 			}
 			catch (IOException | ClassNotFoundException e)
@@ -175,10 +176,10 @@ public class PasswordAuthentication extends AuthenticationMethod implements Seri
 		String algorithm = "PBKDF2WithHmacSHA512";
 		int derivedKeyLength = 512;
 		int iterations = 50000;
-		
 		KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, iterations, derivedKeyLength);
 		SecretKeyFactory f = SecretKeyFactory.getInstance(algorithm);
-		return f.generateSecret(spec).getEncoded();
+		byte[] result = f.generateSecret(spec).getEncoded();
+		return result;
 	}
 	
 	/**
