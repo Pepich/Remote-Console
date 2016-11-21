@@ -94,11 +94,9 @@ public class UserManager extends Thread implements Listener
 	protected static void saveDisplayNames() throws IOException
 	{
 		if (displayNames == null) return;
-		File displayNameDir = Main.getDataLocation();
 		File displayNameFile = new File(Main.getDataLocation(), "displayNames.hmap");
 		if (displayNameFile.exists()) displayNameFile.delete();
-		if (!displayNameDir.mkdirs()) return;
-		if (!displayNameFile.createNewFile()) return;
+		displayNameFile.createNewFile();
 		ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(displayNameFile));
 		out.writeObject(displayNames);
 		out.flush();
@@ -149,12 +147,9 @@ public class UserManager extends Thread implements Listener
 	public void quit()
 	{
 		running = false;
-		for (User user : connectedUsers)
-		{
-			user.disconnect();
-		}
 		try
 		{
+			saveDisplayNames();
 			serverSocket.close();
 		}
 		catch (IOException e)
