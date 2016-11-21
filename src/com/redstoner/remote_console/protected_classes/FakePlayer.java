@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 
 import com.redstoner.remote_console.utils.ConfigHandler;
+import com.redstoner.remote_console.utils.FakeChatTrigger;
 
 /**
  * This class creates a FakePlayer used for sending chat messages and running commands without having an actual online player.
@@ -158,5 +159,15 @@ public class FakePlayer extends CraftPlayer implements Player
 		else
 			chat(input);
 		return 0;
+	}
+	
+	/**
+	 * Overriding the default chat function to allow fake players to interact with chat.
+	 */
+	@Override
+	public void chat(String message)
+	{
+		FakeChatTrigger trigger = new FakeChatTrigger(this, message);
+		Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), trigger);
 	}
 }
