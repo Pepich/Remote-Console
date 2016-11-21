@@ -9,6 +9,8 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import com.redstoner.remote_console.protected_classes.FakePlayer;
 import com.redstoner.remote_console.protected_classes.Main;
 
+import net.md_5.bungee.api.ChatColor;
+
 /**
  * This class deals with sending chat messages of fake players by creating a call-able chat event for fake players.
  * 
@@ -48,7 +50,7 @@ public class FakeChatTrigger implements Runnable
 		Bukkit.getLogger().info(s);
 		if (event.isCancelled()) return;
 		for (final Player p : event.getRecipients())
-			p.sendMessage(s);
-		Main.logger.info(s);
+			p.sendMessage(ChatColor.translateAlternateColorCodes('&', s));
+		Main.logger.info(ChatColor.translateAlternateColorCodes('&', s));
 	}
 }
