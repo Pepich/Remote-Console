@@ -69,6 +69,8 @@ rmc.perm.auth="rmc.auth"<br/>
 rmc.perm.gettoken="rmc.gettoken"<br/>
 \# Node to list all connected users<br/>
 rmc.perm.list="rmc.list"<br/>
+\# Node to search the logs<br/>
+rmc.perm.logs.search="rmc.logs.search"<br/>
 
 \# ----- END OF CONFIG -----
 
