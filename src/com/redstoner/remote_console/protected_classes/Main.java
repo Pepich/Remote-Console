@@ -187,11 +187,11 @@ public class Main extends JavaPlugin implements Listener
 							sender.sendMessage(" §eRMC: Trying to generate a new secret key...");
 							gAuth.enable();
 							key = gAuth.getSecretKey();
-							sender.sendMessage(" §eRMC: The new secret key is: &a" + key);
+							sender.sendMessage(" §eRMC: The new secret key is: §a" + key);
 							sender.sendMessage(" §eRMC: We also generated a new set of restore keys:");
 							
 							for (String key2 : gAuth.getRestoreKeys())
-								sender.sendMessage(" §eRMC: &a" + key2);
+								sender.sendMessage(" §eRMC: §a" + key2);
 						}
 						else
 						{
@@ -224,11 +224,11 @@ public class Main extends JavaPlugin implements Listener
 								sender.sendMessage(" §eRMC: Generating a new secret key...");
 								gAuth.enable();
 								String key = gAuth.getSecretKey();
-								sender.sendMessage(" §eRMC: The new secret key is: &a" + key);
+								sender.sendMessage(" §eRMC: The new secret key is: §a" + key);
 								sender.sendMessage(" §eRMC: We also generated a new set of restore keys:");
 								
 								for (String key2 : gAuth.getRestoreKeys())
-									sender.sendMessage(" §eRMC: &a" + key2);
+									sender.sendMessage(" §eRMC: §a" + key2);
 							}
 							else
 							{
