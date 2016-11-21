@@ -98,7 +98,7 @@ public class LogHandler extends Thread
 		{
 			if (line.matches(regex))
 			{
-				sender.sendMessage((singleFile ? "" : "§7" + filename + ": ") + "§f" + resolveColors(line));
+				sender.sendMessage("§b> " + (singleFile ? "" : "§7" + filename + ": ") + "§f" + resolveColors(line));
 				matches++;
 			}
 		}
