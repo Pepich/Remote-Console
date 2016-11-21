@@ -506,22 +506,31 @@ public class User extends Thread
 	 */
 	private String compute(String input)
 	{
-		if (input.startsWith("getOnlinePlayers"))
+		if (input.equals("test"))
 		{
-			boolean displayName = input.contains("-d");
-			StringBuilder sb = new StringBuilder();
-			for (Player p : Bukkit.getOnlinePlayers())
-			{
-				sb.append((displayName ? p.getDisplayName() : p.getName()) + ", ");
-			}
+			return "Test successfull :D";
 			
-			for (User u : UserManager.getConnectedUsers())
-			{
-				sb.append((displayName ? u.player.getDisplayName() : (u.player.getName() + "[§7C]")) + ", ");
-			}
-			return sb.toString();
 		}
-		if (input.startsWith("cgpass"))
+		else if (input.equals("enable2FA"))
+		{
+			player.compute("/console 2fa enable");
+			return "Ran \"/console 2fa enable";
+		}
+		else if (input.equals("disable2FA"))
+		{
+			player.compute("/console 2fa disable");
+			return "Ran \"/console 2fa disable";
+		}
+		else if (input.equals("get2FAsecret"))
+		{
+			player.compute("/console 2fa-restore");
+			return "Ran \"/console 2fa-restore";
+		}
+		else if (input.equals("help"))
+		{
+			return "Chat and run commands as you would normally do, use the navbar to run special commands :)";
+		}
+		else if (input.startsWith("cgpass"))
 		{
 			String[] args = input.split(" ");
 			if (args.length == 1)
@@ -546,7 +555,7 @@ public class User extends Thread
 			if (result == 0) return "The passwords you entered do not match. Please try again.";
 			if (result == 1) return "Your password has been changed successfully.";
 		}
-		if (input.equals("exit"))
+		else if (input.equals("exit"))
 		{
 			disconnect("Bye o/");
 		}
