@@ -111,6 +111,8 @@ public class FakePlayer extends CraftPlayer implements Player
 	@Override
 	public String getDisplayName()
 	{
+		Player p = Bukkit.getPlayer(getUniqueId());
+		if (p != null) return p.getDisplayName();
 		try
 		{
 			return ConfigHandler.getString("rmc.prefix") + displayName + ConfigHandler.getString("rmc.suffix");
@@ -129,6 +131,8 @@ public class FakePlayer extends CraftPlayer implements Player
 	@Override
 	public void setDisplayName(String displayName)
 	{
+		Player p = Bukkit.getPlayer(getUniqueId());
+		if (p != null) p.setDisplayName(displayName);
 		this.displayName = displayName;
 	}
 	
