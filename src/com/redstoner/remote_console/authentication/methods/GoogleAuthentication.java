@@ -27,6 +27,7 @@ public class GoogleAuthentication extends AuthenticationMethod implements Serial
 	private static final long serialVersionUID = 5531038871418983654L;
 	private String secretKey;
 	private ArrayList<String> restoreKeys;
+	private boolean enabled = false;
 	
 	private GoogleAuthentication(UUID uuid)
 	{
@@ -34,6 +35,7 @@ public class GoogleAuthentication extends AuthenticationMethod implements Serial
 		secretKey = getRandomSecretKey();
 		for (int i = 0; i < 8; i++)
 			restoreKeys.add(getRandomSecretKey());
+		enabled = false;
 	}
 	
 	@Override
@@ -99,5 +101,69 @@ public class GoogleAuthentication extends AuthenticationMethod implements Serial
 		// make the secret key more human-readable by lower-casing and
 		// inserting spaces between each group of 4 characters
 		return secretKey.toLowerCase().replaceAll("(.{4})(?=.{4})", "$1 ");
+	}
+	
+	/**
+	 * This method returns true if 2FA is enabled for the user.
+	 * 
+	 * @return true if enabled
+	 */
+	public boolean isEnabled()
+	{
+		return enabled;
+	}
+	
+	/**
+	 * Enables and if necessary initializes google authentication for the user.
+	 * 
+	 * @return true if a new key and a new set of restore keys were generated
+	 */
+	public boolean enable()
+	{
+		enabled = true;
+		if (secretKey == null)
+		{
+			secretKey = getRandomSecretKey();
+			restoreKeys = new ArrayList<String>();
+			for (int i = 0; i < 8; i++)
+				restoreKeys.add(getRandomSecretKey());
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Disables and if wanted clears google authentication for the user.
+	 * 
+	 * @param clear if set to true, existing data will be deleted
+	 */
+	public void disable(boolean clear)
+	{
+		if (clear)
+		{
+			secretKey = null;
+			restoreKeys = null;
+		}
+		enabled = false;
+	}
+	
+	/**
+	 * This method provides a users restore keys.
+	 * 
+	 * @return the keys
+	 */
+	public ArrayList<String> getRestoreKeys()
+	{
+		return restoreKeys;
+	}
+	
+	/**
+	 * This method will provide the secret key of a user
+	 * 
+	 * @return the key
+	 */
+	public String getSecretKey()
+	{
+		return secretKey;
 	}
 }
