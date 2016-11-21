@@ -33,6 +33,7 @@ public class GoogleAuthentication extends AuthenticationMethod implements Serial
 	{
 		super(uuid);
 		secretKey = getRandomSecretKey();
+		restoreKeys = new ArrayList<String>();
 		for (int i = 0; i < 8; i++)
 			restoreKeys.add(getRandomSecretKey());
 		enabled = false;
