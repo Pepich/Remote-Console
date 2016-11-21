@@ -45,7 +45,6 @@ public class FakePlayer extends CraftPlayer implements Player
 	protected FakePlayer(OfflinePlayer player, String displayName, User owner)
 	{
 		super((CraftServer) Bukkit.getServer(), new FakeEntityPlayer(player.getUniqueId(), player.getName()));
-		System.out.println(player.getUniqueId());
 		this.displayName = displayName;
 		this.owner = owner;
 	}
