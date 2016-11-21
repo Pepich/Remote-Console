@@ -73,7 +73,7 @@ public class GoogleAuthentication extends AuthenticationMethod implements Serial
 	{
 		File saveFile = new File(Main.getDataLocation().getAbsolutePath() + uuid.toString() + "/google-auth.auth");
 		if (!saveFile.exists())
-			return null;
+			return new GoogleAuthentication(uuid);
 		else
 		{
 			try
