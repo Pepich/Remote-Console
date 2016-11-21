@@ -6,15 +6,18 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.zip.GZIPInputStream;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class LogHandler extends Thread
 {
 	private CommandSender sender;
 	private String regex, fileName;
+	private static ArrayList<CommandSender> stillSearching = new ArrayList<CommandSender>();
 	
 	private LogHandler(CommandSender sender, String regex, String fileName)
 	{
@@ -25,6 +28,13 @@ public class LogHandler extends Thread
 	
 	public static void doSearch(CommandSender sender, String regex, String fileName)
 	{
+		if (stillSearching.contains(sender))
+		{
+			sender.sendMessage(" §eRMC: §4DO NOT EVER TRY TO QUERY TWO SEARCHES AT ONCE. Go die...");
+			if (sender instanceof Player) ((Player) sender).setHealth(0);
+			return;
+		}
+		stillSearching.add(sender);
 		LogHandler instance = new LogHandler(sender, regex, fileName);
 		instance.start();
 	}
@@ -38,7 +48,10 @@ public class LogHandler extends Thread
 	 */
 	private void search(CommandSender sender, String regex, String fileName)
 	{
+		long starttime = System.currentTimeMillis();
 		int matches = 0;
+		sender.sendMessage(" §eRMC: Starting log search for §a" + regex + " §ein §a" + fileName
+				+ " §enow. Please don't query another search untils this one is done.");
 		try
 		{
 			if (!regex.startsWith("^")) regex = "^.*" + regex;
@@ -72,8 +85,11 @@ public class LogHandler extends Thread
 		catch (NoSuchElementException | IOException e)
 		{
 			sender.sendMessage(" §eRMC: §cSomething went wrong, the search returned -1... Please check your settings!");
+			stillSearching.remove(sender);
 			return;
 		}
+		stillSearching.remove(sender);
+		sender.sendMessage(" §eRMC: Your search took a total of " + (System.currentTimeMillis() - starttime) + "ms.");
 		sender.sendMessage(" §eRMC: Found " + (matches > 0 ? "§a" : "§c") + matches + " §ematches total.");
 		return;
 	}
