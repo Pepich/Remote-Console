@@ -54,8 +54,8 @@ class Ciphers
 	{
 		this.AESKey = AESKey;
 		
-		System.out.println(
-				new SealedObject("AES key test succesfull!", getNextAESEncode()).getObject(getNextAESDecode()));
+		Main.logger.info((String) new SealedObject("AES key test succesfull!", getNextAESEncode())
+				.getObject(getNextAESDecode()));
 				
 		encode = 0;
 		decode = 0;
