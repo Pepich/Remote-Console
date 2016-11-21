@@ -57,7 +57,7 @@ public class PasswordAuthentication extends AuthenticationMethod implements Seri
 		{
 			if (newPassword.equals(newPasswordConfirmed))
 			{
-				if (hash(oldPassword, salt).equals(hashedPassword))
+				if (Arrays.toString(hash(oldPassword, salt)).equals(Arrays.toString(hashedPassword)))
 				{
 					hashedPassword = hash(newPassword, salt);
 					revalidate();
