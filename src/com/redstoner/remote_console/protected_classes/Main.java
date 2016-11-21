@@ -153,12 +153,12 @@ public class Main extends JavaPlugin implements Listener
 							sender.sendMessage(" §eRMC: Trying to generate a new restore key...");
 							String key = GoogleAuthentication.getRandomSecretKey();
 							gAuth.getRestoreKeys().add(key);
-							sender.sendMessage(" §eRMC: &a" + key);
+							sender.sendMessage(" §eRMC: §a" + key);
 						}
 						else
 						{
 							for (String key : gAuth.getRestoreKeys())
-								sender.sendMessage(" §eRMC: &a" + key);
+								sender.sendMessage(" §eRMC: §a" + key);
 						}
 					}
 					else
