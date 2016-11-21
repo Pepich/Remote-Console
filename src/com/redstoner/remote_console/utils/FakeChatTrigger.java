@@ -46,7 +46,7 @@ public class FakeChatTrigger implements Runnable
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		
 		String s = String.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage());
-		if (event.isCancelled()) return;
+		if (!Bukkit.getOnlinePlayers().isEmpty()) if (event.isCancelled()) return;
 		for (final Player p : event.getRecipients())
 			p.sendMessage(ChatColor.translateAlternateColorCodes('&', s));
 		Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', s));
