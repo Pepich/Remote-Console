@@ -148,7 +148,7 @@ public class Main extends JavaPlugin implements Listener
 						sender.sendMessage(" §eRMC: Found 2FA secret key: §a" + gAuth.getSecretKey());
 						int keyAmount = gAuth.getRestoreKeys().size();
 						sender.sendMessage(
-								" §eRMC: &eFound " + (keyAmount > 0 ? "§a" : "§c") + keyAmount + " §erestore keys:");
+								" §eRMC: §eFound " + (keyAmount > 0 ? "§a" : "§c") + keyAmount + " §erestore keys:");
 						if (keyAmount == 0)
 						{
 							sender.sendMessage(" §eRMC: Trying to generate a new restore key...");
@@ -165,7 +165,7 @@ public class Main extends JavaPlugin implements Listener
 					else
 					{
 						sender.sendMessage(
-								" §eRMC: &cCould not find any 2FA data for the account. Perhaps 2FA is not enabled?");
+								" §eRMC: §cCould not find any 2FA data for the account. Perhaps 2FA is not enabled?");
 					}
 				}
 				
@@ -279,6 +279,9 @@ public class Main extends JavaPlugin implements Listener
 							}
 							else
 							{
+								sender.sendMessage(" §eRMC: 2FA §cdisabled.");
+								sender.sendMessage(
+										" §eRMC: §cNot clearing settings, your keys will still be valid when you enable 2AF again.");
 								gAuth.disable(false);
 							}
 						}
