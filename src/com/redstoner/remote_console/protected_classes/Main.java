@@ -283,8 +283,17 @@ public class Main extends JavaPlugin implements Listener
 					StringBuilder regexBuilder = new StringBuilder();
 					for (int i = 2; i < args.length; i++)
 						regexBuilder.append(args[i]);
-					int result = LogHandler.search(sender, regexBuilder.toString(), args[1]);
-					sender.sendMessage(" §eRMC: Found " + (result > 0 ? "§a" : "§c") + result + " matches total.");
+					int matches = LogHandler.search(sender, regexBuilder.toString(), args[1]);
+					if (matches == -1)
+					{
+						sender.sendMessage(
+								" §eRMC: §cSomething went wrong, the search returned -1... Please check your settings!");
+					}
+					else
+					{
+						sender.sendMessage(
+								" §eRMC: Found " + (matches > 0 ? "§a" : "§c") + matches + " matches total.");
+					}
 				}
 			}
 		}
