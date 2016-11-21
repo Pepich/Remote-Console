@@ -11,7 +11,6 @@ import java.util.NoSuchElementException;
 import java.util.zip.GZIPInputStream;
 
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class LogHandler extends Thread
 {
@@ -31,7 +30,6 @@ public class LogHandler extends Thread
 		if (stillSearching.contains(sender))
 		{
 			sender.sendMessage(" §eRMC: §4DO NOT EVER TRY TO QUERY TWO SEARCHES AT ONCE. Go die...");
-			if (sender instanceof Player) ((Player) sender).setHealth(0);
 			return;
 		}
 		stillSearching.add(sender);
