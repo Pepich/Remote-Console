@@ -8,9 +8,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import java.util.zip.GZIPInputStream;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+
+import com.redstoner.remote_console.protected_classes.FakePlayer;
 
 public class LogHandler extends Thread
 {
@@ -106,12 +111,27 @@ public class LogHandler extends Thread
 	private static int searchStream(BufferedReader inputReader, String regex, CommandSender sender, boolean singleFile,
 			String filename) throws IOException
 	{
+		try
+		{
+			Pattern.compile(regex);
+		}
+		catch (PatternSyntaxException e)
+		{
+			stillSearching.remove(sender);
+			sender.sendMessage(" §eRMC: §cInvalid regex detected:");
+			sender.sendMessage(" §eRMC: §c" + e.getMessage());
+		}
 		int matches = 0;
 		String line = "";
 		while ((line = inputReader.readLine()) != null)
 		{
 			if (line.matches(regex))
 			{
+				if (Bukkit.getPlayer(sender.getName()) == null && !(sender instanceof FakePlayer))
+				{
+					stillSearching.remove(sender);
+					throw new IOException("The player has left during the search. Aborting now.");
+				}
 				sender.sendMessage("§b> " + (singleFile ? "" : "§7" + filename + ": ") + "§f" + resolveColors(line));
 				matches++;
 			}
