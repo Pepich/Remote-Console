@@ -179,11 +179,11 @@ public class Main extends JavaPlugin implements Listener
 					GoogleAuthentication gAuth = GoogleAuthentication.load(uuid);
 					if (gAuth.isEnabled())
 					{
-						sender.sendMessage(" §eRMC: &aFound enabled 2FA. Attempting to retrieve restore data...");
+						sender.sendMessage(" §eRMC: §aFound enabled 2FA. Attempting to retrieve restore data...");
 						String key = gAuth.getSecretKey();
 						if (key == null)
 						{
-							sender.sendMessage(" §eRMC: &cCouldn't find any secret key.");
+							sender.sendMessage(" §eRMC: §cCouldn't find any secret key.");
 							sender.sendMessage(" §eRMC: Trying to generate a new secret key...");
 							gAuth.enable();
 							key = gAuth.getSecretKey();
@@ -201,7 +201,7 @@ public class Main extends JavaPlugin implements Listener
 					else
 					{
 						sender.sendMessage(
-								" §eRMC: &cCould not find any 2FA data for the account. Perhaps 2FA is not enabled?");
+								" §eRMC: §cCould not find any 2FA data for the account. Perhaps 2FA is not enabled?");
 					}
 				}
 				
@@ -233,13 +233,13 @@ public class Main extends JavaPlugin implements Listener
 							else
 							{
 								sender.sendMessage(
-										" §eRMC: &aPrevious settings were restored, your old keys are still valid.");
+										" §eRMC: §aPrevious settings were restored, your old keys are still valid.");
 							}
 							sender.sendMessage(" §eRMC: 2FA §aenabled.");
 						}
 						else
 						{
-							sender.sendMessage(" §eRMC: &c2FA was already enabled!");
+							sender.sendMessage(" §eRMC: §c2FA was already enabled!");
 						}
 					}
 					else if (args[1].equalsIgnoreCase("disable"))
