@@ -280,6 +280,11 @@ public class Main extends JavaPlugin implements Listener
 				else if (args[0].equalsIgnoreCase("search")
 						&& sender.hasPermission(ConfigHandler.getString("rmc.perm.logs.search")))
 				{
+					if (!(sender instanceof Player))
+					{
+						sender.sendMessage(" §4DO NOT EVER RUN THIS FROM CONSOLE!");
+						return true;
+					}
 					StringBuilder regexBuilder = new StringBuilder();
 					for (int i = 2; i < args.length; i++)
 						regexBuilder.append(args[i]);
