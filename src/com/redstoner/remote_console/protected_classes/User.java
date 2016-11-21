@@ -79,7 +79,6 @@ public class User extends Thread
 	{
 		tokenAuth.save();
 		googleAuth.save();
-		ingameAuth.save();
 		passwordAuth.save();
 	}
 	
@@ -273,10 +272,10 @@ public class User extends Thread
 							status++;
 							break;
 						}
-						if (p.getAddress().getHostString().toString().equals(connection.getInetAddress().toString()))
-							status = 14;
-						else
-							status++;
+						//if (p.getAddress().getHostString().toString().equals(connection.getInetAddress().toString()))
+						status = 14;
+						//else
+						//	status++;
 						if (!UserManager.mayAuthorize(uuid))
 						{
 							objectOut.writeObject(new SealedObject("USR-NO-AUT", ciphers.getNextAESEncode()));
@@ -406,7 +405,7 @@ public class User extends Thread
 					objectOut.writeObject(new SealedObject("SRV-REQ-IGA", ciphers.getNextAESEncode()));
 					objectOut.flush();
 					
-					String input = ((String) ((SealedObject) objectIn.readObject())
+					String input = (String) (((SealedObject) objectIn.readObject())
 							.getObject(ciphers.getNextAESDecode()));
 					if (input.equals("yes"))
 					{
