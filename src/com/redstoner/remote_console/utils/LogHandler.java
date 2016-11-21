@@ -62,7 +62,7 @@ public class LogHandler
 						{
 							if (line.matches(regex))
 							{
-								sender.sendMessage((singleFile ? "" : "§7" + file.getName() + ": ") + "&fline");
+								sender.sendMessage((singleFile ? "" : "§7" + file.getName() + ": ") + "§f" + line);
 								matches++;
 							}
 						}
