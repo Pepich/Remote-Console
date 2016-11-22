@@ -46,8 +46,9 @@ public class UserManager extends Thread implements Listener
 	 * @param port the port to listen to for new connections
 	 * @throws IOException if something went wrong setting up the port-binding
 	 */
-	private UserManager(int port) throws IOException
+	private UserManager() throws IOException
 	{
+		int port = ConfigHandler.getInt("rmc.port");
 		Main.logger.info("Trying to bind to port " + port);
 		serverSocket = new ServerSocket(port);
 		try
@@ -109,9 +110,9 @@ public class UserManager extends Thread implements Listener
 	 * @return the singleton instance of the UserManager
 	 * @throws IOException if something went wrong setting up the port-binding
 	 */
-	protected static UserManager getInstance(int port) throws IOException
+	protected static UserManager getInstance() throws IOException
 	{
-		if (instance == null) instance = new UserManager(port);
+		if (instance == null) instance = new UserManager();
 		return instance;
 	}
 	

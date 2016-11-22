@@ -77,7 +77,7 @@ public class Main extends JavaPlugin implements Listener
 		
 		try
 		{
-			userManager = UserManager.getInstance(ConfigHandler.getInt("rmc.port"));
+			userManager = UserManager.getInstance();
 			userManager.start();
 			
 		}
