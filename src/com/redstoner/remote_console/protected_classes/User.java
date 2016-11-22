@@ -442,7 +442,7 @@ public class User extends Thread
 		
 		player = new FakePlayer(Bukkit.getOfflinePlayer(uuid), UserManager.getLastDisplayName(uuid), this);
 		
-		if (passwordAuth.isExpired())
+		if (!passwordAuth.isValid())
 		{
 			try
 			{
