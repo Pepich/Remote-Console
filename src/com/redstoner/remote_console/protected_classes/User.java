@@ -264,6 +264,8 @@ public class User extends Thread
 					input = input.substring(5, input.length() - 5);
 					uuid = Bukkit.getOfflinePlayer(input).getUniqueId();
 					
+					if (uuid == null) disconnect("Username can not be empty");
+					
 					// Check if the user is authorized to view console
 					if (UserManager.mayConnect(uuid))
 					{
