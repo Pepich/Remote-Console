@@ -132,6 +132,7 @@ public class User extends Thread
 	 */
 	protected void disconnect(String message)
 	{
+		isRunning = false;
 		if (!disconnecting)
 		{
 			disconnecting = true;
@@ -300,7 +301,6 @@ public class User extends Thread
 						| InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchPaddingException
 						| IOException | StringIndexOutOfBoundsException e)
 				{
-					e.printStackTrace();
 					disconnect("An unexpected exception occured, closing connection.");
 				}
 				break;
