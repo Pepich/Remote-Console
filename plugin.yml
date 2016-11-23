@@ -1,11 +1,11 @@
-name: REMOTE-CONSOLE
+name: RemoteConsole
 version: 1.0.1
 authors: [pepich1851]
 description: A plugin to let users remotely connect to get limited console access
 load: STARTUP
 main: com.redstoner.remote_console.protected_classes.Main
 depends: ['PermissionsEx']
-prefix: RMCONSOLE
+prefix: RMC
 commands:
   remoteconsole:
     aliases: ["rmconsole", "rmcon", "console"]
