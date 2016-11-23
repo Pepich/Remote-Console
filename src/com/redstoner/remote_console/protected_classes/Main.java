@@ -301,7 +301,7 @@ public class Main extends JavaPlugin implements Listener
 					}
 					StringBuilder regexBuilder = new StringBuilder();
 					for (int i = 2; i < args.length; i++)
-						regexBuilder.append(args[i]);
+						regexBuilder.append(args[i] + " ");
 					LogHandler.doSearch(sender, regexBuilder.toString(), args[1]);
 				}
 			}
