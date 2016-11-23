@@ -7,7 +7,6 @@ import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 
 import com.redstoner.remote_console.protected_classes.Main;
-import com.redstoner.remote_console.protected_classes.UserManager;
 
 /**
  * This class is responsible for grabbing, processing and forwarding the console output to the UserManager.
@@ -52,6 +51,7 @@ public class ConsoleReader extends AbstractAppender
 	@Override
 	public void append(LogEvent event)
 	{
-		UserManager.broadcast(event.getMessage().getFormattedMessage(), true);
+		ConsoleBroadcaster cb = new ConsoleBroadcaster(event.getMessage().getFormattedMessage());
+		cb.start();
 	}
 }
