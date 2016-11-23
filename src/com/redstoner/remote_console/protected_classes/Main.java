@@ -142,17 +142,12 @@ public class Main extends JavaPlugin implements Listener
 						&& sender.hasPermission(ConfigHandler.getString("rmc.perm.gettoken")))
 				{
 					UUID uuid = ((Player) sender).getUniqueId();
-					logger.info("The token for you is: " + TokenAuthentication.load(uuid).getRandomToken());
+					sender.sendMessage("The token for you is: " + TokenAuthentication.load(uuid).getRandomToken());
 				}
 				
 				if (args[0].equals("2fa-restore") && sender.hasPermission(ConfigHandler.getString("rmc.perm.auth")))
 				{
-					UUID uuid = null;
-					if (sender instanceof Player)
-						uuid = ((Player) sender).getUniqueId();
-					else
-						return true;
-						
+					UUID uuid = ((Player) sender).getUniqueId();
 					GoogleAuthentication gAuth = GoogleAuthentication.load(uuid);
 					if (gAuth.isEnabled())
 					{
@@ -183,12 +178,7 @@ public class Main extends JavaPlugin implements Listener
 				
 				if (args[0].equals("2fa-secret") && sender.hasPermission(ConfigHandler.getString("rmc.perm.auth")))
 				{
-					UUID uuid = null;
-					if (sender instanceof Player)
-						uuid = ((Player) sender).getUniqueId();
-					else
-						return true;
-						
+					UUID uuid = ((Player) sender).getUniqueId();
 					GoogleAuthentication gAuth = GoogleAuthentication.load(uuid);
 					if (gAuth.isEnabled())
 					{
