@@ -183,7 +183,7 @@ public class UserManager extends Thread implements Listener
 	 * @param uuid the UUID to check
 	 * @return true if the user with the given UUID has the required permissions to authorize them self
 	 */
-	protected static boolean mayAuthorize(UUID uuid)
+	protected static boolean mayAuthenticate(UUID uuid)
 	{
 		try
 		{
