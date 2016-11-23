@@ -110,6 +110,8 @@ public class User extends Thread
 	 */
 	protected void disconnect()
 	{
+		player.performCommand("ac I'm no longer on console :(");
+		
 		// Tell the main-loop to stop
 		isRunning = false;
 		try
@@ -133,7 +135,6 @@ public class User extends Thread
 	 */
 	protected void disconnect(String message)
 	{
-		player.performCommand("ac I'm no longer on console :(");
 		isRunning = false;
 		if (!disconnecting)
 		{
