@@ -110,7 +110,7 @@ public class User extends Thread
 	 */
 	protected void disconnect()
 	{
-		player.performCommand("ac I'm no longer on console :(");
+		if (player != null) player.performCommand("ac I'm no longer on console :(");
 		
 		// Tell the main-loop to stop
 		isRunning = false;
@@ -373,7 +373,7 @@ public class User extends Thread
 					if (auth)
 					{
 						authAttempts = 0;
-						if (googleAuth != null)
+						if (googleAuth.isEnabled())
 							status = 5;
 						else
 							status = 6;
