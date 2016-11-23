@@ -39,6 +39,7 @@ public class GoogleAuthentication extends AuthenticationMethod implements Serial
 	@Override
 	public boolean authenticate(String[] args)
 	{
+		if (args == null) return false;
 		if (args.length == 0)
 			return false;
 		else if (args[0].replaceAll(" ", "").equals(TOTP.getTOTPCode(secretKey)))

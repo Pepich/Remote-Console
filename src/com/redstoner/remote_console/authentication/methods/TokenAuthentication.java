@@ -44,6 +44,7 @@ public class TokenAuthentication extends AuthenticationMethod implements Seriali
 	@Override
 	public boolean authenticate(String[] args)
 	{
+		if (args == null) return false;
 		if (args.length == 0) return false;
 		if (token == null)
 			return false;

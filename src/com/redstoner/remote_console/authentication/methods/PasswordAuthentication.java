@@ -101,6 +101,7 @@ public class PasswordAuthentication extends AuthenticationMethod implements Seri
 	@Override
 	public boolean authenticate(String[] args)
 	{
+		if (args == null) return false;
 		if (args.length == 0)
 			return false;
 		else
