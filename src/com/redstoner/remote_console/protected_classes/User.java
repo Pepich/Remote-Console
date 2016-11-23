@@ -235,7 +235,10 @@ public class User extends Thread
 					if (input.substring(5, input.length() - 5).equals("USR-RSA-BGN"))
 						status++;
 					else
+					{
 						disconnect("Unexpected message received, closing connection.");
+						return;
+					}
 				}
 				catch (BadPaddingException | IOException | IllegalBlockSizeException | ClassNotFoundException
 						| StringIndexOutOfBoundsException e)
@@ -483,7 +486,11 @@ public class User extends Thread
 							.getObject(ciphers.getNextAESDecode()));
 							
 					result = passwordAuth.changePassword(input[0], input[1], input[2]);
-					if (result == -2) disconnect("An unexpected exception occured, closing connection.");
+					if (result == -2)
+					{
+						disconnect("An unexpected exception occured, closing connection.");
+						return;
+					}
 				}
 			}
 			catch (InvalidKeyException | IllegalBlockSizeException | NoSuchAlgorithmException | NoSuchPaddingException
