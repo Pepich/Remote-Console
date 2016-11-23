@@ -129,6 +129,7 @@ public class Main extends JavaPlugin implements Listener
 											+ (user.isAuthenticated() ? " §a(" : " §c(Not ") + "Authenticated)");
 						}
 					}
+					return true;
 				}
 				
 				if (!(sender instanceof Player))
