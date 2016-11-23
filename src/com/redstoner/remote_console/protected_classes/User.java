@@ -114,7 +114,12 @@ public class User extends Thread
 		// Tell the UserManager about the disconnect
 		UserManager.disconnect(this);
 		
+		// Save changes
+		save();
+		
+		// Send AC message and destroy the player object
 		if (player != null) player.performCommand("ac I'm no longer on console :(");
+		player = null;
 		
 		// Tell the main-loop to stop
 		isRunning = false;
@@ -126,8 +131,6 @@ public class User extends Thread
 		{
 			// Catch exception silently in case of user-initiated connection interrupt
 		}
-		// Save changes
-		save();
 		
 	}
 	
