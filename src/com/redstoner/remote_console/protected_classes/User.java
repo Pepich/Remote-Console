@@ -110,6 +110,10 @@ public class User extends Thread
 	 */
 	protected void disconnect()
 	{
+		
+		// Tell the UserManager about the disconnect
+		UserManager.disconnect(this);
+		
 		if (player != null) player.performCommand("ac I'm no longer on console :(");
 		
 		// Tell the main-loop to stop
@@ -124,8 +128,7 @@ public class User extends Thread
 		}
 		// Save changes
 		save();
-		// Tell the UserManager about the disconnect
-		UserManager.disconnect(this);
+		
 	}
 	
 	/**
@@ -406,7 +409,6 @@ public class User extends Thread
 							.getObject(ciphers.getNextAESDecode()));
 					if (googleAuth.authenticate(input))
 					{
-						status = 6;
 						authAttempts = 0;
 					}
 					else
@@ -522,6 +524,9 @@ public class User extends Thread
 				return;
 			}
 		}
+		
+		disconnect("Execution was stopped.");
+		return;
 	}
 	
 	/**
