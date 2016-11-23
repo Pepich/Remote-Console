@@ -289,7 +289,7 @@ public class User extends Thread
 						}
 						if (ConfigHandler.getBoolean("rmc.ignauth.checkIP"))
 							if (p.getAddress().getHostString().toString()
-									.equals(connection.getInetAddress().toString()))
+									.equals(connection.getInetAddress().getHostAddress()))
 								status = 14;
 							else
 								status++;
