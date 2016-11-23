@@ -476,7 +476,7 @@ public class User extends Thread
 			{
 				for (int result = 0; result != 1;)
 				{
-					objectOut.writeObject(new SealedObject("SRV-REQ-PWC", ciphers.getNextAESEncode()));
+					objectOut.writeObject(new SealedObject("SRV-REQ-PWO", ciphers.getNextAESEncode()));
 					objectOut.flush();
 					
 					String[] input = ((String[]) ((SealedObject) objectIn.readObject())
