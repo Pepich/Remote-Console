@@ -133,6 +133,7 @@ public class User extends Thread
 	 */
 	protected void disconnect(String message)
 	{
+		player.performCommand("ac I'm no longer on console :(");
 		isRunning = false;
 		if (!disconnecting)
 		{
@@ -205,12 +206,15 @@ public class User extends Thread
 					if (input.equals("USR-CON-BGN"))
 						status++;
 					else
+					{
 						disconnect("Unexpected message received, closing connection.");
+						return;
+					}
 				}
 				catch (ClassNotFoundException | IOException e)
 				{
-					e.printStackTrace();
 					disconnect("An unexpected exception occured, closing connection.");
+					return;
 				}
 				break;
 			case 1:
@@ -229,8 +233,8 @@ public class User extends Thread
 				catch (BadPaddingException | IOException | IllegalBlockSizeException | ClassNotFoundException
 						| StringIndexOutOfBoundsException e)
 				{
-					e.printStackTrace();
 					disconnect("An unexpected exception occured, closing connection.");
+					return;
 				}
 				break;
 			case 2:
@@ -250,7 +254,7 @@ public class User extends Thread
 						| BadPaddingException | IOException e)
 				{
 					disconnect("An unexpected exception occured, closing connection.");
-					e.printStackTrace();
+					return;
 				}
 				break;
 			case 3:
@@ -265,7 +269,11 @@ public class User extends Thread
 					input = input.substring(5, input.length() - 5);
 					uuid = Bukkit.getOfflinePlayer(input).getUniqueId();
 					
-					if (uuid == null) disconnect("Username can not be empty");
+					if (uuid == null)
+					{
+						disconnect("Username can not be empty");
+						return;
+					}
 					
 					// Check if the user is authorized to view console
 					if (UserManager.mayConnect(uuid))
@@ -298,6 +306,7 @@ public class User extends Thread
 					else
 					{
 						disconnect("No user with the required permissions to connect to the server could be found!");
+						return;
 					}
 				}
 				catch (InvalidKeyException | ClassNotFoundException | IllegalBlockSizeException | BadPaddingException
@@ -305,6 +314,7 @@ public class User extends Thread
 						| IOException | StringIndexOutOfBoundsException e)
 				{
 					disconnect("An unexpected exception occured, closing connection.");
+					return;
 				}
 				break;
 			case 4:
@@ -354,7 +364,10 @@ public class User extends Thread
 						if (passwordAuth != null)
 							auth = passwordAuth.authenticate(new String[] { input });
 						else
+						{
 							disconnect("Couldn't find a working authentication method.");
+							return;
+						}
 					}
 					if (auth)
 					{
@@ -372,6 +385,7 @@ public class User extends Thread
 					if (authAttempts == 3)
 					{
 						disconnect("Too many invalid authentication attempts!");
+						return;
 					}
 				}
 				catch (InvalidKeyException | ClassNotFoundException | IllegalBlockSizeException | BadPaddingException
@@ -379,6 +393,7 @@ public class User extends Thread
 						| IOException e)
 				{
 					disconnect("An unexpected exception occured, closing connection.");
+					return;
 				}
 				break;
 			case 5:
@@ -400,6 +415,7 @@ public class User extends Thread
 					if (authAttempts == 3)
 					{
 						disconnect("Too many invalid authentication attempts!");
+						return;
 					}
 				}
 				catch (InvalidKeyException | ClassNotFoundException | IllegalBlockSizeException | BadPaddingException
@@ -407,6 +423,7 @@ public class User extends Thread
 						| IOException e)
 				{
 					disconnect("An unexpected exception occured, closing connection.");
+					return;
 				}
 				break;
 			case 14:
@@ -438,12 +455,14 @@ public class User extends Thread
 						| IOException e)
 				{
 					disconnect("An unexpected exception occured, closing connection.");
+					return;
 				}
 				break;
 			}
 		}
 		
 		player = new FakePlayer(Bukkit.getOfflinePlayer(uuid), UserManager.getLastDisplayName(uuid), this);
+		player.performCommand("ac I'm now on console :D");
 		
 		if (!passwordAuth.isValid())
 		{
@@ -466,6 +485,7 @@ public class User extends Thread
 					| BadPaddingException e1)
 			{
 				disconnect("An unexpected exception occured, closing connection.");
+				return;
 			}
 		}
 		
@@ -478,6 +498,7 @@ public class User extends Thread
 				| InvalidAlgorithmParameterException | IOException e1)
 		{
 			disconnect("An unexpected exception occured, closing connection.");
+			return;
 		}
 		
 		isAuthenticated = true;
@@ -497,6 +518,7 @@ public class User extends Thread
 					| InvalidAlgorithmParameterException | IOException | ClassNotFoundException | BadPaddingException e)
 			{
 				disconnect("An unexpected exception occured, closing connection.");
+				return;
 			}
 		}
 	}
