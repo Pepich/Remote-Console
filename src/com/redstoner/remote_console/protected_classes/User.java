@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -286,7 +287,7 @@ public class User extends Thread
 						else
 							status = 14;
 							
-						if (!UserManager.mayAuthorize(uuid))
+						if (!UserManager.mayAuthenticate(uuid))
 						{
 							objectOut.writeObject(new SealedObject("USR-NO-AUT", ciphers.getNextAESEncode()));
 							objectOut.flush();
@@ -625,5 +626,10 @@ public class User extends Thread
 	public UUID getUUID()
 	{
 		return uuid;
+	}
+	
+	public InetAddress getIP()
+	{
+		return connection.getInetAddress();
 	}
 }
