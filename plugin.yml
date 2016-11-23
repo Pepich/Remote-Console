@@ -1,5 +1,5 @@
 name: REMOTE-CONSOLE
-version: 1.0.0
+version: 1.0.1
 authors: [pepich1851]
 description: A plugin to let users remotely connect to get limited console access
 load: STARTUP
