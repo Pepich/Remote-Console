@@ -103,43 +103,54 @@ public class Main extends JavaPlugin implements Listener
 			if (cmd.getName().equalsIgnoreCase("remoteconsole")
 					&& sender.hasPermission(ConfigHandler.getString("rmc.perm")))
 			{
-				if (args[0].equalsIgnoreCase("gettoken")
-						&& sender.hasPermission(ConfigHandler.getString("rmc.perm.gettoken")))
+				if (args.length < 1)
 				{
-					UUID uuid = null;
-					if (sender instanceof Player)
-					{
-						uuid = ((Player) sender).getUniqueId();
-						logger.info("The token for you is: " + TokenAuthentication.load(uuid).getRandomToken());
-					}
-					else
-					{
-						uuid = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
-						logger.info(
-								"The token for " + args[1] + " is: " + TokenAuthentication.load(uuid).getRandomToken());
-					}
+					sender.sendMessage("§aRMC working as intended. Version " + plugin.getDescription().getVersion()
+							+ " installed.");
+					return true;
 				}
-				else if (args[0].equalsIgnoreCase("list")
-						&& sender.hasPermission(ConfigHandler.getString("rmc.perm.list")))
+				
+				if (args[0].equalsIgnoreCase("list") && sender.hasPermission(ConfigHandler.getString("rmc.perm.list")))
 				{
 					sender.sendMessage("§e RMC: There is a total of §a" + UserManager.getConnectedUsers().size()
 							+ " §eusers connected right now:");
 					for (User user : UserManager.getConnectedUsers())
 					{
-						OfflinePlayer player = Bukkit.getOfflinePlayer(user.getUUID());
-						sender.sendMessage(
-								"§e " + (player == null ? "UUID: " + user.getUUID() : "Name: " + player.getName())
-										+ (user.isAuthenticated() ? " §a(" : " §c(Not ") + "Authenticated)");
+						if (user.getUUID() == null)
+						{
+							sender.sendMessage(
+									"§e Unknown user: §c(Not Authenticated) - IP:" + user.getIP().toString());
+						}
+						else
+						{
+							OfflinePlayer player = Bukkit.getOfflinePlayer(user.getUUID());
+							sender.sendMessage(
+									"§e " + (player == null ? "UUID: " + user.getUUID() : "Name: " + player.getName())
+											+ (user.isAuthenticated() ? " §a(" : " §c(Not ") + "Authenticated)");
+						}
 					}
 				}
-				else if (args[0].equals("2fa-restore")
-						&& sender.hasPermission(ConfigHandler.getString("rmc.perm.auth")))
+				
+				if (!(sender instanceof Player))
+				{
+					sender.sendMessage("§4DO NOT EVER RUN THIS FROM CONSOLE!");
+					return true;
+				}
+				
+				if (args[0].equalsIgnoreCase("gettoken")
+						&& sender.hasPermission(ConfigHandler.getString("rmc.perm.gettoken")))
+				{
+					UUID uuid = ((Player) sender).getUniqueId();
+					logger.info("The token for you is: " + TokenAuthentication.load(uuid).getRandomToken());
+				}
+				
+				if (args[0].equals("2fa-restore") && sender.hasPermission(ConfigHandler.getString("rmc.perm.auth")))
 				{
 					UUID uuid = null;
 					if (sender instanceof Player)
 						uuid = ((Player) sender).getUniqueId();
 					else
-						uuid = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
+						return true;
 						
 					GoogleAuthentication gAuth = GoogleAuthentication.load(uuid);
 					if (gAuth.isEnabled())
@@ -169,13 +180,13 @@ public class Main extends JavaPlugin implements Listener
 					}
 				}
 				
-				else if (args[0].equals("2fa-secret") && sender.hasPermission(ConfigHandler.getString("rmc.perm.auth")))
+				if (args[0].equals("2fa-secret") && sender.hasPermission(ConfigHandler.getString("rmc.perm.auth")))
 				{
 					UUID uuid = null;
 					if (sender instanceof Player)
 						uuid = ((Player) sender).getUniqueId();
 					else
-						uuid = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
+						return true;
 						
 					GoogleAuthentication gAuth = GoogleAuthentication.load(uuid);
 					if (gAuth.isEnabled())
@@ -206,18 +217,21 @@ public class Main extends JavaPlugin implements Listener
 					}
 				}
 				
-				else if (args[0].equalsIgnoreCase("2fa"))
+				if (args[0].equalsIgnoreCase("2fa"))
 				{
+					if (args.length < 2)
+					{
+						UUID uuid = ((Player) sender).getUniqueId();
+						GoogleAuthentication gAuth = GoogleAuthentication.load(uuid);
+						sender.sendMessage(
+								" §eRMC: 2FA for this account is " + (gAuth.enable() ? "§a" : "§cnot ") + "enabled!");
+						return true;
+					}
+					
 					if (args[1].equalsIgnoreCase("enable"))
 					{
-						UUID uuid = null;
-						if (sender instanceof Player)
-							uuid = ((Player) sender).getUniqueId();
-						else
-							uuid = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
-							
+						UUID uuid = ((Player) sender).getUniqueId();
 						GoogleAuthentication gAuth = GoogleAuthentication.load(uuid);
-						
 						if (!gAuth.isEnabled())
 						{
 							if (gAuth.enable())
@@ -245,14 +259,8 @@ public class Main extends JavaPlugin implements Listener
 					}
 					else if (args[1].equalsIgnoreCase("disable"))
 					{
-						UUID uuid = null;
-						if (sender instanceof Player)
-							uuid = ((Player) sender).getUniqueId();
-						else
-							uuid = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
-							
+						UUID uuid = ((Player) sender).getUniqueId();
 						GoogleAuthentication gAuth = GoogleAuthentication.load(uuid);
-						
 						if (gAuth.isEnabled())
 						{
 							if (args.length == 3)
@@ -291,12 +299,13 @@ public class Main extends JavaPlugin implements Listener
 						}
 					}
 				}
-				else if (args[0].equalsIgnoreCase("search")
+				
+				if (args[0].equalsIgnoreCase("search")
 						&& sender.hasPermission(ConfigHandler.getString("rmc.perm.logs.search")))
 				{
-					if (!(sender instanceof Player))
+					if (args.length < 3)
 					{
-						sender.sendMessage("§4DO NOT EVER RUN THIS FROM CONSOLE!");
+						sender.sendMessage("§cNot enough parameters specified. Requires at least 3!");
 						return true;
 					}
 					StringBuilder regexBuilder = new StringBuilder();
@@ -306,7 +315,7 @@ public class Main extends JavaPlugin implements Listener
 				}
 			}
 		}
-		catch (InvalidObjectException | NoSuchElementException e)
+		catch (Exception e)
 		{
 			sender.sendMessage("§cSomething went wrong: " + e.getMessage());
 		}
