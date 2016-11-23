@@ -7,7 +7,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.zip.GZIPInputStream;
@@ -85,7 +84,7 @@ public class LogHandler extends Thread
 				}
 			}
 		}
-		catch (NoSuchElementException | IOException e)
+		catch (Exception e)
 		{
 			sender.sendMessage(" §eRMC: §cSomething went wrong, the search returned -1... Please check your settings!");
 			stillSearching.remove(sender);
@@ -178,6 +177,11 @@ public class LogHandler extends Thread
 	@Override
 	public void run()
 	{
-		search(sender, regex, fileName);
+		try
+		{
+			search(sender, regex, fileName);
+		}
+		catch (Exception e)
+		{}
 	}
 }
