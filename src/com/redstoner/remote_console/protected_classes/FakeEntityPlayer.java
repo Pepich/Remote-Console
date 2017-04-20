@@ -5,7 +5,9 @@ import java.util.UUID;
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.server.v1_11_R1.EntityPlayer;
+import net.minecraft.server.v1_11_R1.EnumProtocolDirection;
 import net.minecraft.server.v1_11_R1.MinecraftServer;
+import net.minecraft.server.v1_11_R1.PlayerConnection;
 import net.minecraft.server.v1_11_R1.PlayerInteractManager;
 import net.minecraft.server.v1_11_R1.WorldServer;
 
@@ -24,6 +26,8 @@ public class FakeEntityPlayer extends EntityPlayer
 			PlayerInteractManager playerinteractmanager)
 	{
 		super(minecraftserver, worldserver, gameprofile, playerinteractmanager);
+		this.playerConnection = new PlayerConnection(minecraftserver,
+				new CustomNetworkManager(EnumProtocolDirection.SERVERBOUND), this);
 	}
 	
 	/** Constructor to allow creation of a FakePlayer without an actual online player.
@@ -35,5 +39,7 @@ public class FakeEntityPlayer extends EntityPlayer
 	{
 		super(MinecraftServer.getServer(), MinecraftServer.getServer().getWorldServer(0),
 				new GameProfile(uuid, displayName), new PlayerInteractManager(MinecraftServer.getServer().getWorld()));
+		this.playerConnection = new PlayerConnection(MinecraftServer.getServer(),
+				new CustomNetworkManager(EnumProtocolDirection.SERVERBOUND), this);
 	}
 }
