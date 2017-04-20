@@ -11,8 +11,8 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.zip.GZIPInputStream;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import com.redstoner.remote_console.protected_classes.FakePlayer;
 
@@ -110,6 +110,10 @@ public class LogHandler extends Thread
 	private static int searchStream(BufferedReader inputReader, String regex, CommandSender sender, boolean singleFile,
 			String filename) throws IOException
 	{
+		FakePlayer fp = null;
+		if (sender instanceof FakePlayer) fp = (FakePlayer) sender;
+		Player p = null;
+		if (sender instanceof Player) p = (Player) sender;
 		try
 		{
 			Pattern.compile(regex);
@@ -126,7 +130,7 @@ public class LogHandler extends Thread
 		{
 			if (line.matches(regex))
 			{
-				if (Bukkit.getPlayer(sender.getName()) == null && !(sender instanceof FakePlayer))
+				if (((fp != null) && (!fp.ownerConnected())) || ((p != null) && (!p.isOnline())))
 				{
 					stillSearching.remove(sender);
 					throw new IOException("The player has left during the search. Aborting now.");
