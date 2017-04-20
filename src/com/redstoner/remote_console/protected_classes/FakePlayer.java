@@ -2,6 +2,7 @@ package com.redstoner.remote_console.protected_classes;
 
 import java.io.InvalidObjectException;
 import java.lang.reflect.Field;
+import java.net.InetSocketAddress;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -441,5 +442,11 @@ public class FakePlayer extends CraftPlayer implements Listener
 		if (owner == null)
 			return false;
 		return owner.isConnected();
+	}
+	
+	@Override
+	public InetSocketAddress getAddress()
+	{
+		return owner.getSocketAddress();
 	}
 }

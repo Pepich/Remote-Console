@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -618,6 +619,11 @@ public class User extends Thread
 	public InetAddress getIP()
 	{
 		return connection.getInetAddress();
+	}
+	
+	public InetSocketAddress getSocketAddress()
+	{
+		return new InetSocketAddress(connection.getInetAddress().getHostName(), connection.getPort());
 	}
 	
 	/** @return whether the connection is still alive or not. */
