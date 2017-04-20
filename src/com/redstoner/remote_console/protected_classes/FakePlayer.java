@@ -30,7 +30,6 @@ import com.redstoner.remote_console.utils.FakeChatTrigger;
 
 import net.minecraft.server.v1_11_R1.DedicatedPlayerList;
 import net.minecraft.server.v1_11_R1.EnumProtocolDirection;
-import net.minecraft.server.v1_11_R1.MinecraftServer;
 
 /** This class creates a FakePlayer used for sending chat messages and running commands without having an actual online player.
  * 
@@ -324,11 +323,10 @@ public class FakePlayer extends CraftPlayer implements Listener
 	 * 
 	 * @param command the command to be run
 	 * @return true if the execution was successful */
-	@SuppressWarnings("deprecation")
 	@Override
 	public boolean performCommand(String command)
 	{
-		if (Thread.currentThread() != MinecraftServer.getServer().primaryThread)
+		if (!Bukkit.isPrimaryThread())
 		{
 			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable()
 			{
