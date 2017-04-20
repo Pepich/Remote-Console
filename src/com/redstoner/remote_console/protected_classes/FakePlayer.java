@@ -218,20 +218,28 @@ public class FakePlayer extends CraftPlayer implements Listener
 	protected void delete()
 	{
 		if (player == null)
-			try
+			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable()
 			{
-				skipEvent = true;
-				Field playerListField = Bukkit.getServer().getClass().getDeclaredField("playerList");
-				playerListField.setAccessible(true);
-				DedicatedPlayerList playerList = (DedicatedPlayerList) playerListField.get(Bukkit.getServer());
-				playerList.disconnect(getHandle());
-			}
-			catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e2)
-			{}
-			finally
-			{
-				skipEvent = false;
-			}
+				@Override
+				public void run()
+				{
+					try
+					{
+						skipEvent = true;
+						Field playerListField = Bukkit.getServer().getClass().getDeclaredField("playerList");
+						playerListField.setAccessible(true);
+						DedicatedPlayerList playerList = (DedicatedPlayerList) playerListField.get(Bukkit.getServer());
+						playerList.disconnect(getHandle());
+					}
+					catch (NoSuchFieldException | SecurityException | IllegalArgumentException
+							| IllegalAccessException e2)
+					{}
+					finally
+					{
+						skipEvent = false;
+					}
+				}
+			});
 		HandlerList.unregisterAll(this);
 	}
 	
