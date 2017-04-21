@@ -2,6 +2,8 @@ package com.redstoner.remote_console.protected_classes;
 
 import java.util.UUID;
 
+import org.bukkit.craftbukkit.v1_11_R1.entity.CraftPlayer;
+
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.server.v1_11_R1.EntityPlayer;
@@ -23,11 +25,12 @@ public class FakeEntityPlayer extends EntityPlayer
 	 * @param gameprofile the GameProfile of the user
 	 * @param playerinteractmanager the PlayerInteractManager of the user */
 	public FakeEntityPlayer(MinecraftServer minecraftserver, WorldServer worldserver, GameProfile gameprofile,
-			PlayerInteractManager playerinteractmanager)
+			PlayerInteractManager playerinteractmanager, User owner)
 	{
 		super(minecraftserver, worldserver, gameprofile, playerinteractmanager);
 		this.playerConnection = new PlayerConnection(minecraftserver,
 				new CustomNetworkManager(EnumProtocolDirection.SERVERBOUND), this);
+		this.bukkitEntity = new FakePlayer(uniqueID, owner, this);
 	}
 	
 	/** Constructor to allow creation of a FakePlayer without an actual online player.
@@ -35,11 +38,17 @@ public class FakeEntityPlayer extends EntityPlayer
 	 * 
 	 * @param uuid the UUID of the player
 	 * @param displayName the displayName to be used for the player */
-	public FakeEntityPlayer(UUID uuid, String displayName)
+	public FakeEntityPlayer(UUID uuid, String displayName, User owner)
 	{
 		super(MinecraftServer.getServer(), MinecraftServer.getServer().getWorldServer(0),
 				new GameProfile(uuid, displayName), new PlayerInteractManager(MinecraftServer.getServer().getWorld()));
 		this.playerConnection = new PlayerConnection(MinecraftServer.getServer(),
 				new CustomNetworkManager(EnumProtocolDirection.SERVERBOUND), this);
+		this.bukkitEntity = new FakePlayer(uniqueID, owner, this);
+	}
+	
+	protected void setBukkitEntity(CraftPlayer player)
+	{
+		this.bukkitEntity = player;
 	}
 }

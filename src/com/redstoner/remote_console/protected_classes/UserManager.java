@@ -218,20 +218,18 @@ public class UserManager extends Thread implements Listener
 	 * 
 	 * @param uuid the uuid of the user to get the Player from.
 	 * @return a player that can run commands even when not online. */
-	public static FakePlayer getPlayer(UUID uuid)
+	public static FakePlayer getPlayer(UUID uuid, User owner)
 	{
-		return new FakePlayer(uuid, Bukkit.getOfflinePlayer(uuid), getLastDisplayName(uuid));
+		return (FakePlayer) (FakeEntityPlayerManager.getFakeEntityPlayer(uuid, getLastDisplayName(uuid), owner))
+				.getBukkitEntity();
 	}
 	
-	/** This method will get the last known displayName of the user with the given uuid. Will return the current displayName if the user is online.
+	/** This method will get the last known displayName of the user with the given uuid.
 	 * 
 	 * @param uuid the uuid of the user
 	 * @return the displayName of the user */
 	public static String getLastDisplayName(UUID uuid)
 	{
-		Player p = Bukkit.getPlayer(uuid);
-		if (p != null)
-			return p.getDisplayName();
 		return displayNames.get(uuid) != null ? displayNames.get(uuid) : Bukkit.getOfflinePlayer(uuid).getName();
 	}
 	
@@ -251,6 +249,8 @@ public class UserManager extends Thread implements Listener
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event)
 	{
+		if (event.getPlayer() instanceof FakePlayer)
+			return;
 		setLastDisplayName(event.getPlayer().getUniqueId(), event.getPlayer().getDisplayName());
 	}
 	

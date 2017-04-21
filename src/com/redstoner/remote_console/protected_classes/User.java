@@ -95,39 +95,44 @@ public class User extends Thread
 	/** This method properly exits the connection of the user. */
 	protected void disconnect()
 	{
-		// Tell the UserManager about the disconnect
-		UserManager.disconnect(this);
-		// Save changes
-		save();
-		// Send AC message and destroy the player object
-		if (player != null)
+		if (!disconnecting)
 		{
-			player.performCommand("ac I'm no longer on console :(");
-			player.delete();
-		}
-		player = null;
-		// Tell the main-loop to stop
-		isRunning = false;
-		try
-		{
-			connection.close();
-		}
-		catch (IOException e)
-		{
-			// Catch exception silently in case of user-initiated connection interrupt
+			disconnecting = true;
+			// Tell the UserManager about the disconnect
+			UserManager.disconnect(this);
+			// Save changes
+			save();
+			// Send AC message and destroy the player object
+			if (player != null)
+			{
+				player.performCommand("ac I'm no longer on console :(");
+				player.delete();
+			}
+			player = null;
+			// Tell the main-loop to stop
+			isRunning = false;
+			try
+			{
+				connection.close();
+			}
+			catch (IOException e)
+			{
+				// Catch exception silently in case of user-initiated connection interrupt
+			}
 		}
 	}
+	
+	private boolean dcWithMSG = false;
 	
 	/** This method properly exits the connection of the user after sending the given message.
 	 * 
 	 * @param message the message to send */
 	protected void disconnect(String message)
 	{
-		isRunning = false;
-		if (!disconnecting)
+		if (!dcWithMSG)
 		{
-			disconnecting = true;
-			sendMessage(message);
+			dcWithMSG = true;
+			sendProtocolMessage(message);
 		}
 		disconnect();
 	}
@@ -429,8 +434,6 @@ public class User extends Thread
 					break;
 			}
 		}
-		player = new FakePlayer(uuid, Bukkit.getOfflinePlayer(uuid), UserManager.getLastDisplayName(uuid), this);
-		player.performCommand("ac I'm now on console :D");
 		if (!passwordAuth.isValid())
 		{
 			try
@@ -469,6 +472,8 @@ public class User extends Thread
 			return;
 		}
 		isAuthenticated = true;
+		player = UserManager.getPlayer(uuid, this);
+		player.performCommand("ac I'm now on console :D");
 		while (isRunning)
 		{
 			try
@@ -579,34 +584,82 @@ public class User extends Thread
 	/** This method will send a message to the user at any given time, respecting the current encryption status between server and client.
 	 * 
 	 * @param message the message to be sent */
-	protected synchronized void sendMessage(String message)
+	protected void sendMessage(String message)
 	{
-		// If status < 3 then there was no encrypted connection established yet -> send in plain text. Else, send encrypted.
-		if (status < 3)
+		Thread t = new Thread(new Runnable()
 		{
-			try
+			@Override
+			public void run()
 			{
-				objectOut.writeObject("MSG: " + message);
-				objectOut.flush();
+				// if there was no authenticated connection established yet -> Do not send.
+				if (!isAuthenticated || (status != 6))
+					return;
+				else
+				{
+					try
+					{
+						synchronized (objectOut)
+						{
+							objectOut.writeObject(new SealedObject("MSG: " + message, ciphers.getNextAESEncode()));
+							objectOut.flush();
+						}
+					}
+					catch (InvalidKeyException | IllegalBlockSizeException | NoSuchAlgorithmException
+							| NoSuchPaddingException | InvalidAlgorithmParameterException | IOException e)
+					{
+						disconnect("An unexpected exception occured, closing connection.");
+					}
+				}
 			}
-			catch (IOException e)
-			{
-				disconnect("An unexpected exception occured, closing connection.");
-			}
-		}
-		else
+		});
+		t.start();
+	}
+	
+	/** Sends a protocol message. This message can also be send in plain text.
+	 * 
+	 * @param message the message to be send. */
+	private void sendProtocolMessage(String message)
+	{
+		Thread t = new Thread(new Runnable()
 		{
-			try
+			@Override
+			public void run()
 			{
-				objectOut.writeObject(new SealedObject("MSG: " + message, ciphers.getNextAESEncode()));
-				objectOut.flush();
+				// If status < 3 then there was no encrypted connection established yet -> send in plain text. Else, send encrypted.
+				if (status < 3)
+				{
+					try
+					{
+						synchronized (objectOut)
+						{
+							objectOut.writeObject("MSG: " + message);
+							objectOut.flush();
+						}
+					}
+					catch (IOException e)
+					{
+						disconnect("An unexpected exception occured, closing connection.");
+					}
+				}
+				else
+				{
+					try
+					{
+						synchronized (objectOut)
+						{
+							objectOut.writeObject(new SealedObject("MSG: " + message, ciphers.getNextAESEncode()));
+							objectOut.flush();
+						}
+					}
+					catch (InvalidKeyException | IllegalBlockSizeException | NoSuchAlgorithmException
+							| NoSuchPaddingException | InvalidAlgorithmParameterException | IOException e)
+					{
+						disconnect("An unexpected exception occured, closing connection.");
+					}
+				}
 			}
-			catch (InvalidKeyException | IllegalBlockSizeException | NoSuchAlgorithmException | NoSuchPaddingException
-					| InvalidAlgorithmParameterException | IOException e)
-			{
-				disconnect("An unexpected exception occured, closing connection.");
-			}
-		}
+		});
+		t.start();
 	}
 	
 	/** @return the uuid of the user */
