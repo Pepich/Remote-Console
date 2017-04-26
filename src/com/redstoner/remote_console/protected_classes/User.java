@@ -40,6 +40,7 @@ public class User extends Thread
 	private PasswordAuthentication passwordAuth;
 	private boolean isAuthenticated = false;
 	private UUID uuid;
+	private String name;
 	private File saveFile;
 	private final Socket connection;
 	private final ObjectInputStream objectIn;
@@ -257,6 +258,7 @@ public class User extends Thread
 							disconnect("Username can not be empty");
 							return;
 						}
+						name = input;
 						// Check if the user is authorized to view console
 						if (UserManager.mayConnect(uuid))
 						{
@@ -666,6 +668,12 @@ public class User extends Thread
 	public UUID getUUID()
 	{
 		return uuid;
+	}
+	
+	/** @return the name of the user. */
+	public String getUsername()
+	{
+		return name;
 	}
 	
 	/** @return the IP address of the connection */

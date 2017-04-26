@@ -22,6 +22,7 @@ import org.bukkit.permissions.Permission;
 
 import com.redstoner.remote_console.utils.ConfigHandler;
 
+import net.md_5.bungee.api.ChatColor;
 import net.minecraft.server.v1_11_R1.DedicatedPlayerList;
 
 /** This class creates a FakePlayer used for sending chat messages and running commands without having an actual online player.
@@ -282,8 +283,8 @@ public class FakePlayer extends CraftPlayer implements Player, Listener
 	{
 		try
 		{
-			return ConfigHandler.getString("rmc.prefix") + super.getDisplayName()
-					+ ConfigHandler.getString("rmc.suffix");
+			return ChatColor.translateAlternateColorCodes('&', ConfigHandler.getString("rmc.prefix")
+					+ super.getDisplayName() + ConfigHandler.getString("rmc.suffix"));
 		}
 		catch (InvalidObjectException | NoSuchElementException e)
 		{

@@ -7,8 +7,8 @@ public class FakeEntityPlayerManager
 	private FakeEntityPlayerManager()
 	{}
 	
-	public static FakeEntityPlayer getFakeEntityPlayer(UUID uuid, String displayName, User owner)
+	public static FakeEntityPlayer getFakeEntityPlayer(UUID uuid, String name, String displayname, User owner)
 	{
-		return new FakeEntityPlayer(uuid, displayName, owner);
+		return new FakeEntityPlayer(uuid, name, displayname, owner);
 	}
 }

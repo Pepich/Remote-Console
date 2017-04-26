@@ -220,8 +220,8 @@ public class UserManager extends Thread implements Listener
 	 * @return a player that can run commands even when not online. */
 	public static FakePlayer getPlayer(UUID uuid, User owner)
 	{
-		return (FakePlayer) (FakeEntityPlayerManager.getFakeEntityPlayer(uuid, getLastDisplayName(uuid), owner))
-				.getBukkitEntity();
+		return (FakePlayer) (FakeEntityPlayerManager.getFakeEntityPlayer(uuid, owner.getUsername(),
+				getLastDisplayName(uuid), owner)).getBukkitEntity();
 	}
 	
 	/** This method will get the last known displayName of the user with the given uuid.
