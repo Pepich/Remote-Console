@@ -18,12 +18,12 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.permissions.Permission;
 
 import com.redstoner.remote_console.utils.ConfigHandler;
 
 import net.md_5.bungee.api.ChatColor;
 import net.minecraft.server.v1_11_R1.DedicatedPlayerList;
+import net.minecraft.server.v1_11_R1.MinecraftServer;
 
 /** This class creates a FakePlayer used for sending chat messages and running commands without having an actual online player.
  * 
@@ -94,7 +94,7 @@ public class FakePlayer extends CraftPlayer implements Player, Listener
 						Field playerListField = Bukkit.getServer().getClass().getDeclaredField("playerList");
 						playerListField.setAccessible(true);
 						DedicatedPlayerList playerList = (DedicatedPlayerList) playerListField.get(Bukkit.getServer());
-						playerList.onPlayerJoin(getHandle(), null);
+						playerList.a(getHandle(), MinecraftServer.getServer().getWorldServer(0));
 					}
 					catch (NoSuchFieldException | SecurityException | IllegalArgumentException
 							| IllegalAccessException e2)
@@ -129,7 +129,7 @@ public class FakePlayer extends CraftPlayer implements Player, Listener
 						Field playerListField = Bukkit.getServer().getClass().getDeclaredField("playerList");
 						playerListField.setAccessible(true);
 						DedicatedPlayerList playerList = (DedicatedPlayerList) playerListField.get(Bukkit.getServer());
-						playerList.onPlayerJoin(getHandle(), null);
+						playerList.a(getHandle(), MinecraftServer.getServer().getWorldServer(0));
 					}
 					catch (NoSuchFieldException | SecurityException | IllegalArgumentException
 							| IllegalAccessException e2)
@@ -177,7 +177,7 @@ public class FakePlayer extends CraftPlayer implements Player, Listener
 						Field playerListField = Bukkit.getServer().getClass().getDeclaredField("playerList");
 						playerListField.setAccessible(true);
 						DedicatedPlayerList playerList = (DedicatedPlayerList) playerListField.get(Bukkit.getServer());
-						playerList.onPlayerJoin(getHandle(), null);
+						playerList.a(getHandle(), MinecraftServer.getServer().getWorldServer(0));
 					}
 					catch (NoSuchFieldException | SecurityException | IllegalArgumentException
 							| IllegalAccessException e2)
@@ -247,34 +247,6 @@ public class FakePlayer extends CraftPlayer implements Player, Listener
 		if (owner != null)
 			for (String message : messages)
 				owner.sendMessage(message);
-	}
-	
-	/** Overriding the default hasPermission call to allow for offline player permissions using PEX. */
-	@Override
-	public boolean hasPermission(String permission)
-	{
-		return UserManager.hasOfflinePEXPermission(getName(), permission);
-	}
-	
-	/** Overriding the default hasPermission call to allow for offline player permissions using PEX. */
-	@Override
-	public boolean hasPermission(Permission permission)
-	{
-		return UserManager.hasOfflinePEXPermission(getName(), permission.getName());
-	}
-	
-	/** To avoid problems, always return true. */
-	@Override
-	public boolean isPermissionSet(String permission)
-	{
-		return true;
-	}
-	
-	/** To avoid problems, always return true. */
-	@Override
-	public boolean isPermissionSet(Permission permission)
-	{
-		return true;
 	}
 	
 	/** Overriding the method to avoid NPE. Will put the prefix and suffix in place. */
@@ -351,26 +323,6 @@ public class FakePlayer extends CraftPlayer implements Player, Listener
 		else
 			chat(input);
 		return 0;
-	}
-	
-	// /** Overriding the default chat function to allow fake players to interact with chat. */
-	// @Override
-	// public void chat(String message)
-	// {
-	// FakeChatTrigger trigger = new FakeChatTrigger(this, message);
-	// Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), trigger);
-	// }
-	/** Override the default check to always return true. Allows tricking plugins into thinking that the player actually is online. */
-	@Override
-	public boolean isOnline()
-	{
-		return true;
-	}
-	
-	@Override
-	public boolean hasPlayedBefore()
-	{
-		return true;
 	}
 	
 	/** @return whether the owner is connected or not. Always false when the owner is not set. */
